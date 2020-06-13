@@ -2,4 +2,5 @@
 
 using namespace std;
 
-string inpEncrypt(string name);
+string inpEncrypt(string name, int keyMul, int keyAdd);
+void enKey();
