@@ -4,6 +4,8 @@
 #include <string>
 #include <fstream>
 #include "Crypto.h"
+#include "Helper.h"
+#include "MangMethods.h"
 
 using namespace std;
 
@@ -20,23 +22,37 @@ void getKey() {
         inFile.clear();
         enKey();
         inFile.open("EncryptKey.key");
+        
+        // Creating a new database file to store passes
+        ofstream outFile("Database.csv");
+        outFile.clear();
+        outFile.close();
     }
+
     // Setting encryption key from file
     string line;                                    // To store each line from EncryptKey.key file
+    
     // Getting mul val
     getline(inFile, line);
     enKeyMul = stoi(line);
+    
     // Getting add val
     getline(inFile, line);
     enKeyAdd = stoi(line);
 }
 
-int main()
-{
-    string inpPass;
+int main(int nArgs, char *allArgs[]) {
+    // Variable declaraion and initialisation
+    string inpPass;                                 // To store input string from user
+    string oprArg = allArgs[1];                     // To store operation argument
+    
     // Setting encryption key
     getKey();
-    cout << "Enter a string : ";
-    getline(cin, inpPass);
-    cout << "Encrypted string : " << inpEncrypt(inpPass, enKeyMul, enKeyAdd) << endl;
+
+    // To determine operation
+    if (toLower(oprArg).compare("add") == 0) {
+        // Calling addPass method of MangMethods file to add a new password
+        addPass();
+    }
+    return 0;
 }

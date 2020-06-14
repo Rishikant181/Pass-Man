@@ -140,10 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Crypto.cpp" />
+    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="MangMethods.cpp" />
     <ClCompile Include="PassMan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Crypto.h" />
+    <ClInclude Include="Helper.h" />
+    <ClInclude Include="MangMethods.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
