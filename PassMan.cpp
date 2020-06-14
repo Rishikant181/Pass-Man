@@ -13,32 +13,46 @@ using namespace std;
 int enKeyMul = 0;                                   // To store necryption key multiplicative part
 int enKeyAdd = 0;                                   // To store necryption key additive part
 
+// Method to initialise files for 1st time use
+void initaliseFirst() {
+    // Generating encryption key 1st
+    cout << "Setting pass-man for 1st time use ............" << endl;
+    enKey();
+
+    // Creating a new database file
+    ofstream dataBase("Database.csv");
+    dataBase.clear();
+    dataBase.close();
+
+    // Completing 1st time init
+    cout << "Succesfully generated encryption key and database file !" << endl;
+}
+
 // Method to load encryption key
 void getKey() {
-    ifstream inFile("EncryptKey.key");
+    ifstream enKeyFile("EncryptionKey.key");
     // If no encryption key is detected i.e, for 1st time initialisation of encryption key
-    if (inFile.is_open() == false) {
-        // Setting new encryption key if not present
-        inFile.clear();
-        enKey();
-        inFile.open("EncryptKey.key");
-        
-        // Creating a new database file to store passes
-        ofstream outFile("Database.csv");
-        outFile.clear();
-        outFile.close();
+    if (enKeyFile.is_open() == false) {
+        // Initialising for 1st time use
+        initaliseFirst();
+
+        // Reopening enccryption key file
+        enKeyFile.open("EncryptionKey.key");
     }
 
     // Setting encryption key from file
     string line;                                    // To store each line from EncryptKey.key file
     
     // Getting mul val
-    getline(inFile, line);
+    getline(enKeyFile, line);
     enKeyMul = stoi(line);
     
     // Getting add val
-    getline(inFile, line);
+    getline(enKeyFile, line);
     enKeyAdd = stoi(line);
+
+    // Closing enKeyFile
+    enKeyFile.close();
 }
 
 int main(int nArgs, char *allArgs[]) {

@@ -15,13 +15,11 @@ void enKey() {
 	int ranAdd = rand() % 100 + 1;					// To store additive part of key
 	
 	// Saving encryption key to file
-	ofstream outFile("EncryptKey.key");
+	ofstream outFile("EncryptionKey.key");
 
 	if (outFile.is_open()) {
 		outFile << ranMul << "\n";
 		outFile << ranAdd << "\n";
-		cout << "Generated a new encryption key and saved it to file !" << endl;
-		cout << "Also created the database.csv file !" << endl;
 		outFile.close();
 	}
 }

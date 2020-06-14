@@ -14,9 +14,9 @@ string conPass;										// To store the confirmation password
 // Method to add a new password to the database
 void addPass() {
 	cout << "Enter reference name for password :  ";
-	cin >> refName;
-	cout << "Enter password : " << endl;
+	getline(cin, refName);
+	cout << "Enter password : ";
 	getline(cin, actPass);
-	cout << "Confirm password : " << endl;
+	cout << "Confirm password : ";
 	getline(cin, conPass);
 }
