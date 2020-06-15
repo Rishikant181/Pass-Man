@@ -1,5 +1,4 @@
-﻿  Crypto.cpp
-D:\Developement\C++\pass-man\Crypto.cpp(13,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-D:\Developement\C++\pass-man\Crypto.cpp(30,31): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  LINK : D:\Developement\C++\pass-man\x64\Debug\pass-man.exe not found or not built by the last incremental link; performing full link
+﻿  MangMethods.cpp
+  PassMan.cpp
+  Generating Code...
   pass-man.vcxproj -> D:\Developement\C++\pass-man\x64\Debug\pass-man.exe

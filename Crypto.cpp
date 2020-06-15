@@ -8,19 +8,15 @@
 using namespace std;
 
 // Method to generate an encryption key
-void enKey() {
+void enKey(ofstream& inFile) {
 	// Variable declaration and initialisation
 	srand(time(NULL));								// Seed value for rand()
 	int ranMul = rand() % 100 + 1;					// To store multplicative part of key
 	int ranAdd = rand() % 100 + 1;					// To store additive part of key
 	
-	// Saving encryption key to file
-	ofstream outFile("EncryptionKey.key");
-
-	if (outFile.is_open()) {
-		outFile << ranMul << "\n";
-		outFile << ranAdd << "\n";
-		outFile.close();
+	if (inFile.is_open()) {
+		inFile << ranMul << "\n";
+		inFile << ranAdd << "\n";
 	}
 }
 

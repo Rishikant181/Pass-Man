@@ -13,60 +13,84 @@ using namespace std;
 int enKeyMul = 0;                                   // To store necryption key multiplicative part
 int enKeyAdd = 0;                                   // To store necryption key additive part
 
-// Method to initialise files for 1st time use
-void initaliseFirst() {
-    // Generating encryption key 1st
-    cout << "Setting pass-man for 1st time use ............" << endl;
-    enKey();
+// Vars to store files names
+string enFileName = "EncryptionKey.key";            // To store encryption key file name
+string dataFileName = "Database.csv";               // To store database file name
 
-    // Creating a new database file
-    ofstream dataBase("Database.csv");
-    dataBase.clear();
-    dataBase.close();
+// Files to handle reading-writing of encryption key
+ifstream inpEnKey;                                  // File to handle reading from encryption key
+ofstream outEnKey;                                  // File to handle writing to encryption key
 
-    // Completing 1st time init
-    cout << "Succesfully generated encryption key and database file !" << endl;
-}
+// Files to handle reading-writing of database
+ifstream inpData;                                   // File to handle reading from database
+ofstream outData;                                   // File to handle writing to database  
 
 // Method to load encryption key
-void getKey() {
-    ifstream enKeyFile("EncryptionKey.key");
-    // If no encryption key is detected i.e, for 1st time initialisation of encryption key
-    if (enKeyFile.is_open() == false) {
-        // Initialising for 1st time use
-        initaliseFirst();
-
-        // Reopening enccryption key file
-        enKeyFile.open("EncryptionKey.key");
-    }
-
+void getKey(ifstream& inpFile) {
     // Setting encryption key from file
     string line;                                    // To store each line from EncryptKey.key file
     
     // Getting mul val
-    getline(enKeyFile, line);
+    getline(inpFile, line);
     enKeyMul = stoi(line);
     
     // Getting add val
-    getline(enKeyFile, line);
+    getline(inpFile, line);
     enKeyAdd = stoi(line);
+}
 
-    // Closing enKeyFile
-    enKeyFile.close();
+void firstInit() {
+    // Opening files to test whether 1st time or not
+    inpEnKey.open(enFileName);
+    inpData.open(dataFileName);
+
+    // Checking if 1st time use of pass-man
+    if (inpEnKey.is_open() == false || inpData.is_open() == false) {
+        cout << "Setting up pass-man for 1st time use ............." << endl;
+        inpEnKey.close();
+        inpData.close();
+
+        // Generating new files and reopening
+        outEnKey.open(enFileName);
+        outData.open(dataFileName);
+
+        // Saving new but empty files
+        outEnKey.close();
+        outData.close();
+
+        // Generating new encryption key
+        outEnKey.open(enFileName);
+        enKey(outEnKey);
+        outEnKey.clear();
+        outEnKey.close();
+
+        cout << "Successfully generated Database file and Encryption Key !" << endl;
+    }
+    // Closing previously opened files
+    inpEnKey.close();
+    inpData.close();
+
+    // Getting encryption key
+    inpEnKey.open(enFileName);
+    getKey(inpEnKey);
+    inpEnKey.clear();
+    inpEnKey.close();
 }
 
 int main(int nArgs, char *allArgs[]) {
     // Variable declaraion and initialisation
+    firstInit();
     string inpPass;                                 // To store input string from user
     string oprArg = allArgs[1];                     // To store operation argument
     
-    // Setting encryption key
-    getKey();
-
     // To determine operation
     if (toLower(oprArg).compare("add") == 0) {
+        // Opening output database in append mode
+        outData.open(dataFileName, ios_base::app);
         // Calling addPass method of MangMethods file to add a new password
-        addPass();
+        addPass(outData, enKeyMul, enKeyAdd);
+        outData.clear();
+        outData.close();
     }
     return 0;
 }
