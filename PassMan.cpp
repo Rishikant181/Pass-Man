@@ -81,10 +81,10 @@ int main(int nArgs, char *allArgs[]) {
     // Variable declaraion and initialisation
     firstInit();
     string inpPass;                                 // To store input string from user
-    string oprArg = allArgs[1];                     // To store operation argument
+    string oprArg = toLower(allArgs[1]);            // To store operation argument
     
     // To determine operation
-    if (toLower(oprArg).compare("add") == 0) {
+    if (oprArg.compare("add") == 0) {
         // Opening output database in append mode
         outData.open(dataFileName, ios_base::app);
         // Calling addPass method of MangMethods file to add a new password
