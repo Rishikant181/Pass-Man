@@ -82,8 +82,9 @@ int main(int nArgs, char *allArgs[]) {
     firstInit();
     string inpPass;                                 // To store input string from user
     string oprArg = toLower(allArgs[1]);            // To store operation argument
-    
+        
     // To determine operation
+    // For adding password
     if (oprArg.compare("add") == 0) {
         // Opening output database in append mode
         outData.open(dataFileName, ios_base::app);
@@ -91,6 +92,29 @@ int main(int nArgs, char *allArgs[]) {
         addPass(outData, enKeyMul, enKeyAdd);
         outData.clear();
         outData.close();
+        // Exiting from program
+        return 0;
+    }
+    // For getting password
+    else if (oprArg.compare("get") == 0) {
+        // Opening database
+        inpData.open(dataFileName);
+        string valArg = toLower(allArgs[2]);            // To store argument passed to operation
+        string enPass = getPass(inpData, toLower(valArg));
+        inpData.clear();
+        inpData.close();
+        // If reference name not found
+        if (enPass.compare("Not Found") == 0) {
+            cout << "Reference name not found in database !";
+            // Exitting from program
+            return 0;
+        }
+        else {
+            // Decrypting password and outputting
+            cout << inpDecrypt(enPass, enKeyMul, enKeyAdd) << endl;
+            // Exitting from program
+            return 0;
+        }        
     }
     return 0;
 }

@@ -36,3 +36,20 @@ string inpEncrypt(string inpStr, int keyMul, int keyAdd) {
 	}
 	return enPass;
 }
+
+// Method to decrypt the input data
+string inpDecrypt(string inpStr, int keyMul, int keyAdd) {
+	string enChar = "";								// To store each encrypted char
+	string actPass = "";							// To store the actual password
+	int inpLen = inpStr.length();					// To store length of input string
+	for (int i = 0 ; i < inpLen; i++) {
+		if (inpStr[i] != '-') {
+			enChar += inpStr[i];
+		}
+		else {
+			actPass += (char)((stoi(enChar) - keyAdd) / keyMul);
+			enChar = "";
+		}
+	}
+	return actPass;
+}
