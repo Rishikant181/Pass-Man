@@ -2,6 +2,6 @@
 
 using namespace std;
 
-string inpEncrypt(string name, int keyMul, int keyAdd);
-string inpDecrypt(string inpStr, int keyMul, int keyAdd);
+string inpEncrypt(string name);
+string inpDecrypt(string inpStr);
 void enKey(ofstream& inFile);

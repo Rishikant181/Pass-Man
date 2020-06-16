@@ -4,28 +4,9 @@
 #include <iostream>
 #include "Crypto.h"
 #include "Helper.h"
+#include "PassMan.h"
 
 using namespace std;
-
-// Method to extract encrypted password from line
-string getPassFromLine(string inpLine) {
-	int comCount = 0;								// To store number of commas passed
-	int lineLen = inpLine.length();					// To store length of line
-	string encryptedPass = "";						// To store encrypted password
-	for (int i = 0; i < lineLen; i++) {
-		// Keeping track of comma count
-		if (inpLine[i] == ',') {
-			comCount += 1;
-		}
-		// If the comma before encrypted password
-		else if (comCount == 2) {
-			// Extracting substring of line beginning from current position after comma to end
-			encryptedPass = inpLine.substr(i);
-			encryptedPass = encryptedPass.substr(0, encryptedPass.length());
-			return encryptedPass;
-		}
-	}
-}
 
 // Method to get non-optional input
 string getReqInput() {
@@ -45,7 +26,7 @@ string getReqInput() {
 }
 
 // Method to add a new password to the database
-void addPass(ofstream& outData, int enKeyMul, int enKeyAdd) {
+void addPass(ofstream& outData) {
 	// Declaring vars
 	string refName;										// To store reference name of a password
 	string passCom;										// To store commments about passwrds
@@ -64,7 +45,7 @@ void addPass(ofstream& outData, int enKeyMul, int enKeyAdd) {
 	// Checking if conPass == actPass
 	if (conPass.compare(actPass) == 0) {
 		// Adding data to database
-		outData << refName << "," << passCom << "," << inpEncrypt(actPass, enKeyMul, enKeyAdd) << endl;
+		outData << refName << "," << passCom << "," << inpEncrypt(actPass) << endl;
 		outData.clear();
 		cout << "Successfully stored password !" << endl;
 	}
@@ -80,22 +61,48 @@ string getPass(ifstream& inData, string searchItem) {
 	bool isFound = false;							// To store whether refName found in database or not
 	searchItem = toLower(searchItem);
 	// Opening database file
-	do {
+	while (true) {
 		// Getting each line from inData
 		getline(inData, line);
 		line = toLower(line);
+
+		// Checking if blank line, i.e, end of file
+		if (line.compare("") == 0) {
+			break;
+		}
 
 		// Checking for match case
 		if (searchItem.compare(line.substr(0, searchItem.length())) == 0) {
 			// Flagging as found
 			isFound = true;
 			// Getting password for associated reference name
-			enPass = getPassFromLine(line);
+			enPass = subStr(line, ',', 2, 3);
 			return enPass;
 		}
-	} while (line.compare("") != 0);
+	}
 	// If not found
 	if (isFound == false) {
 		return "Not Found";
+	}
+}
+
+// Method to get the list of all passwords stored by pass-man and displaying only refName and comments
+void getList(ifstream& inpFile) {
+	string line;									// To store each line of inpFile
+	string refName;									// To store the reference name
+	string passCom;									// To store the comment
+	while (true) {
+		getline(inpFile, line);
+		// If end of file, i.e, blank file
+		if (line.compare("") == 0) {
+			break;
+		}
+		// Getting refName
+		refName = line.substr(0, line.find(','));
+		// Getting comment
+		passCom = subStr(line, ',', 1, 2);
+		// Displaying
+		cout << "Reference Name : " << refName << endl;
+		cout << "Comments       : " << passCom << + "\n" << endl;
 	}
 }

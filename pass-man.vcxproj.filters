@@ -38,5 +38,8 @@
     <ClInclude Include="MangMethods.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PassMan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

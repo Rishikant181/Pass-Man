@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include "PassMan.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ void enKey(ofstream& inFile) {
 }
 
 // Method to encrypt the input data
-string inpEncrypt(string inpStr, int keyMul, int keyAdd) {
+string inpEncrypt(string inpStr) {
 	// Variable declaration and initialisation
 	int lenPass = inpStr.length();					//To store the length of pass
 	string enPass = "";								//To store the encrypted pass
@@ -30,7 +31,7 @@ string inpEncrypt(string inpStr, int keyMul, int keyAdd) {
 	for (int i = 0; i < lenPass; i++) {
 		int iChar = inpStr[i];						//To store each char ascii value
 		// Encrypting the ascii value of char
-		int eIChar = iChar * keyMul + keyAdd;
+		int eIChar = iChar * enKeyMul + enKeyAdd;
 		// Storing encrypted pass
 		enPass += (to_string(eIChar) + "-");
 	}
@@ -38,7 +39,7 @@ string inpEncrypt(string inpStr, int keyMul, int keyAdd) {
 }
 
 // Method to decrypt the input data
-string inpDecrypt(string inpStr, int keyMul, int keyAdd) {
+string inpDecrypt(string inpStr) {
 	string enChar = "";								// To store each encrypted char
 	string actPass = "";							// To store the actual password
 	int inpLen = inpStr.length();					// To store length of input string
@@ -47,7 +48,7 @@ string inpDecrypt(string inpStr, int keyMul, int keyAdd) {
 			enChar += inpStr[i];
 		}
 		else {
-			actPass += (char)((stoi(enChar) - keyAdd) / keyMul);
+			actPass += (char)((stoi(enChar) - enKeyAdd) / enKeyMul);
 			enChar = "";
 		}
 	}

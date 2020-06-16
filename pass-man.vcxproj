@@ -148,6 +148,7 @@
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="MangMethods.h" />
+    <ClInclude Include="PassMan.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

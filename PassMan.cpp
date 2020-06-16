@@ -89,7 +89,7 @@ int main(int nArgs, char *allArgs[]) {
         // Opening output database in append mode
         outData.open(dataFileName, ios_base::app);
         // Calling addPass method of MangMethods file to add a new password
-        addPass(outData, enKeyMul, enKeyAdd);
+        addPass(outData);
         outData.clear();
         outData.close();
         // Exiting from program
@@ -111,10 +111,19 @@ int main(int nArgs, char *allArgs[]) {
         }
         else {
             // Decrypting password and outputting
-            cout << inpDecrypt(enPass, enKeyMul, enKeyAdd) << endl;
+            cout << inpDecrypt(enPass) << endl;
             // Exitting from program
             return 0;
         }        
+    }
+    // For getting stored passwords refName list with comments
+    else if (oprArg.compare("list") == 0) {
+        // Opening database
+        inpData.open(dataFileName);
+        getList(inpData);
+        inpData.clear();
+        inpData.close();
+        return 0;
     }
     return 0;
 }
