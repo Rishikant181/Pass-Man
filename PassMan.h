@@ -1,3 +1,7 @@
-// Declaring these two as extern to use global var
+#include <string>
+
+using namespace std;
+
 extern int enKeyMul;
 extern int enKeyAdd;
+extern string dataFileName;

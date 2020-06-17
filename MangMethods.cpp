@@ -8,6 +8,31 @@
 
 using namespace std;
 
+// Method to check for duplicate refName, return false if not present and true otherwise
+bool checkRefName(ifstream& inpFile, string inpRefName) {
+	string line;									// To store each line of inpFile
+	string refName;									// To store extracted refName from file
+	inpRefName = toLower(inpRefName);
+
+	// Getting each line from file
+	while (true) {
+		getline(inpFile, line);
+		// Checking for blank line, i.e, end of file
+		if (line.compare("") == 0) {
+			return false;
+		}
+		// For non-blank line
+		refName = toLower(line.substr(0, line.find(',')));
+		
+		// Checking for match
+		if (refName.compare(inpRefName) == 0) {
+			return true;
+		}
+	}
+	// For not present
+	return false;
+}
+
 // Method to get non-optional input
 string getReqInput() {
 	string inpVal;									// To store input string
@@ -35,22 +60,33 @@ void addPass(ofstream& outData) {
 
 	cout << "Enter reference name for password :  ";
 	refName = getReqInput();
-	cout << "Comments (Optional) : ";
-	getline(cin, passCom);
-	cout << "Enter password : ";
-	actPass = getReqInput();
-	cout << "Confirm password : ";
-	conPass = getReqInput();
-
-	// Checking if conPass == actPass
-	if (conPass.compare(actPass) == 0) {
-		// Adding data to database
-		outData << refName << "," << passCom << "," << inpEncrypt(actPass) << endl;
-		outData.clear();
-		cout << "Successfully stored password !" << endl;
+	// Checking if duplicate refName
+	ifstream tempFile(dataFileName);
+	if (checkRefName(tempFile, refName) == true) {
+		cout << "Reference name already in use, please enter a different reference name !" << endl;
+		tempFile.clear();
+		tempFile.close();
 	}
 	else {
-		cout << "Confirmation failed ! Please try again !";
+		tempFile.clear();
+		tempFile.close();
+		cout << "Comments (Optional) : ";
+		getline(cin, passCom);
+		cout << "Enter password : ";
+		actPass = getReqInput();
+		cout << "Confirm password : ";
+		conPass = getReqInput();
+
+		// Checking if conPass == actPass
+		if (conPass.compare(actPass) == 0) {
+			// Adding data to database
+			outData << refName << "," << passCom << "," << inpEncrypt(actPass) << endl;
+			outData.clear();
+			cout << "Successfully stored password !" << endl;
+		}
+		else {
+			cout << "Confirmation failed ! Please try again !";
+		}
 	}
 }
 
