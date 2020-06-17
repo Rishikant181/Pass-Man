@@ -9,16 +9,23 @@
 using namespace std;
 
 // Method to generate an encryption key
-void enKey(ofstream& inFile) {
+void enKey() {
 	// Variable declaration and initialisation
 	srand(time(NULL));								// Seed value for rand()
 	int ranMul = rand() % 100 + 1;					// To store multplicative part of key
 	int ranAdd = rand() % 100 + 1;					// To store additive part of key
 	
-	if (inFile.is_open()) {
-		inFile << ranMul << "\n";
-		inFile << ranAdd << "\n";
+	// Opening encryption key file
+	outEnKey.open(enFileName);
+
+	if (outEnKey.is_open()) {
+		outEnKey << ranMul << "\n";
+		outEnKey << ranAdd << "\n";
 	}
+
+	// Closing enKeyFile
+	outEnKey.clear();
+	outEnKey.close();
 }
 
 // Method to encrypt the input data

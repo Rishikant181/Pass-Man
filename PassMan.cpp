@@ -27,16 +27,16 @@ ifstream inpData;                                   // File to handle reading fr
 ofstream outData;                                   // File to handle writing to database  
 
 // Method to load encryption key
-void getKey(ifstream& inpFile) {
+void getKey() {
     // Setting encryption key from file
     string line;                                    // To store each line from EncryptKey.key file
     
     // Getting mul val
-    getline(inpFile, line);
+    getline(inpEnKey, line);
     enKeyMul = stoi(line);
     
     // Getting add val
-    getline(inpFile, line);
+    getline(inpEnKey, line);
     enKeyAdd = stoi(line);
 }
 
@@ -48,17 +48,13 @@ void firstInit() {
         filesystem::create_directory("Key");
         filesystem::create_directory("Data");
 
-        // Generating new encryption key
-        outEnKey.open(enFileName);
-        enKey(outEnKey);
-        outEnKey.clear();
-        outEnKey.close();
+        enKey();
 
         cout << "Successfully generated Database file and Encryption Key !" << endl;
     }
     // Getting encryption key
     inpEnKey.open(enFileName);
-    getKey(inpEnKey);
+    getKey();
     inpEnKey.clear();
     inpEnKey.close();
 }
@@ -70,39 +66,64 @@ int main(int nArgs, char *allArgs[]) {
     string refName;                                 // To store reference name
         
     // To determine operation
+    
     // For adding password
     if (oprArg.compare("add") == 0) {
         // Getting reference name
-        refName = allArgs[2];
+        refName = toLower(allArgs[2]);
+        
         // Opening output database in append mode
         outData.open(dataLocation + refName + ".pass", ios_base::app);
+        
         // Calling addPass method of MangMethods file to add a new password
         addPass();
         outData.clear();
         outData.close();
+        
         // Exiting from program
         return 0;
     }
     // For getting password
     else if (oprArg.compare("get") == 0) {
         // Getting reference name
-        refName = allArgs[2];
+        refName = toLower(allArgs[2]);
+        
         // Opening Passfile
         string refName = toLower(allArgs[2]);           // To store refName
         string enPass = getPass(refName);               // To store encrypted password from database
-        // If reference name not found
+        
+                                                        // If reference name not found
         if (enPass.compare("NA") == 0) {
             cout << "Reference name not found in database" << endl;
             return 0;
         }
+        
         // Decrypting password and outputting
         cout << inpDecrypt(enPass) << endl;
+        
         // Exitting from program
         return 0;
     }
     // For getting stored passwords refName list with comments
     else if (oprArg.compare("list") == 0) {
         getList();
+        return 0;
+    }
+    // For editing a stored password
+    else if (oprArg.compare("edit") == 0) {
+        bool isEdited;                                  // To store whether password edited or not
+        
+        // Getting reference name
+        refName = toLower(allArgs[2]);
+        isEdited = editPass(refName);
+
+        // Checking if changes made
+        if (isEdited == true) {
+            cout << "Password update succesful" << endl;
+        }
+        else {
+            cout << "No changes were made" << endl;
+        }
         return 0;
     }
     return 0;

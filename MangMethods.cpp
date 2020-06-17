@@ -59,7 +59,7 @@ void addPass() {
 
 	cout << "Comments (Optional) : ";
 	getline(cin, passCom);
-	cout << "Enter password : ";
+	cout << "Enter password   : ";
 	actPass = getReqInput();
 	cout << "Confirm password : ";
 	conPass = getReqInput();
@@ -110,5 +110,105 @@ void getList() {
 		// Displaying
 		cout << "Reference Name : " << refName << endl;
 		cout << "Comments       : " << passCom << "\n" << endl;
+	}
+}
+
+// Method to modify a stored password using refName
+bool editPass(string refName) {
+	int oprChoice;									// To store operation choice
+	string choice;
+	string line;									// To store the input from file
+	string newRefName;								// To store new reference name
+	string newPassCom;								// To store new comment
+	string newPass;									// To store new password
+	string newPassCon;								// To store new password confirmation
+	// If refName exists
+	if (filesystem::exists(dataLocation + refName + ".pass") == true) {
+		// Storing original line temporarily
+		inpData.open(dataLocation + refName + ".pass");
+		getline(inpData, line);
+		inpData.clear();
+		inpData.close();
+		
+		// Asking for operation
+		cout << "1. Change reference name" << endl;
+		cout << "2. Change comment" << endl;
+		cout << "3. Change password" << endl;
+		
+		try {
+			// Taking choice
+			getline(cin, choice);
+			oprChoice = stoi(choice);
+		}
+		catch (invalid_argument ia) {
+			cout << "Please enter number only !" << endl;
+			return false;
+		}
+
+		switch (oprChoice) {
+		// For changing reference name
+		case 1: {
+			cout << "Enter new reference name : ";
+			newRefName = getReqInput();
+
+			// Deleting old data
+			filesystem::remove(dataLocation + refName + ".pass");
+
+			// Writing new data
+			outData.open(dataLocation + newRefName + ".pass");
+			outData << line;
+			outData.clear();
+			outData.close();
+			return true;
+		}
+		// For changing comment
+		case 2: {
+			cout << "Enter new comment : ";
+			getline(cin, newPassCom);
+
+			// Deleting old data
+			filesystem::remove(dataLocation + refName + ".pass");
+
+			// Writing new data
+			outData.open(dataLocation + refName + ".pass");
+			outData << line.substr(0, line.find(' ')) + " " + newPassCom;
+			outData.clear();
+			outData.close();
+			return true;
+		}
+		// For changing password
+		case 3: {
+			cout << "Enter new password   : ";
+			newPass = getReqInput();
+			cout << "Confirm new password : ";
+			newPassCon = getReqInput();
+
+			// Checking for confirmation
+			if (newPass.compare(newPassCom) != 0) {
+				cout << "Confirmation failed !" << endl;
+				return false;
+			}
+			
+			// Deleting old data
+			filesystem::remove(dataLocation + refName + ".pass");
+
+			// Writing new data
+			outData.open(dataLocation + refName + ".pass");
+			outData << newPass + line.substr(line.find(' '));
+			outData.clear();
+			outData.close();
+			return true;
+		}
+		// For no match case
+		default: {
+			return false;
+		}
+		}
+
+	}
+	// If refName does not exist
+	else {
+		cout << "Reference name not found, password does not exist" << endl;
+		return false;
 	}
 }
