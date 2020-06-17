@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <filesystem>
 #include "Crypto.h"
 #include "Helper.h"
 #include "MangMethods.h"
@@ -14,8 +15,8 @@ int enKeyMul = 0;                                   // To store necryption key m
 int enKeyAdd = 0;                                   // To store necryption key additive part
 
 // Vars to store files names
-string enFileName = "EncryptionKey.key";            // To store encryption key file name
-string dataFileName = "Database.csv";               // To store database file name
+string enFileName = "Key\\EncryptionKey.key";       // To store encryption key file name
+string dataLocation = "Data\\";                     // To store location of data
 
 // Files to handle reading-writing of encryption key
 ifstream inpEnKey;                                  // File to handle reading from encryption key
@@ -40,23 +41,12 @@ void getKey(ifstream& inpFile) {
 }
 
 void firstInit() {
-    // Opening files to test whether 1st time or not
-    inpEnKey.open(enFileName);
-    inpData.open(dataFileName);
-
-    // Checking if 1st time use of pass-man
-    if (inpEnKey.is_open() == false || inpData.is_open() == false) {
+    if (filesystem::exists("Data") == false) {
         cout << "Setting up pass-man for 1st time use ............." << endl;
-        inpEnKey.close();
-        inpData.close();
 
-        // Generating new files and reopening
-        outEnKey.open(enFileName);
-        outData.open(dataFileName);
-
-        // Saving new but empty files
-        outEnKey.close();
-        outData.close();
+        // Creating directory to store data
+        filesystem::create_directory("Key");
+        filesystem::create_directory("Data");
 
         // Generating new encryption key
         outEnKey.open(enFileName);
@@ -66,10 +56,6 @@ void firstInit() {
 
         cout << "Successfully generated Database file and Encryption Key !" << endl;
     }
-    // Closing previously opened files
-    inpEnKey.close();
-    inpData.close();
-
     // Getting encryption key
     inpEnKey.open(enFileName);
     getKey(inpEnKey);
@@ -80,16 +66,18 @@ void firstInit() {
 int main(int nArgs, char *allArgs[]) {
     // Variable declaraion and initialisation
     firstInit();
-    string inpPass;                                 // To store input string from user
     string oprArg = toLower(allArgs[1]);            // To store operation argument
+    string refName;                                 // To store reference name
         
     // To determine operation
     // For adding password
     if (oprArg.compare("add") == 0) {
+        // Getting reference name
+        refName = allArgs[2];
         // Opening output database in append mode
-        outData.open(dataFileName, ios_base::app);
+        outData.open(dataLocation + refName + ".pass", ios_base::app);
         // Calling addPass method of MangMethods file to add a new password
-        addPass(outData);
+        addPass();
         outData.clear();
         outData.close();
         // Exiting from program
@@ -97,32 +85,24 @@ int main(int nArgs, char *allArgs[]) {
     }
     // For getting password
     else if (oprArg.compare("get") == 0) {
-        // Opening database
-        inpData.open(dataFileName);
-        string valArg = toLower(allArgs[2]);            // To store argument passed to operation
-        string enPass = getPass(inpData, toLower(valArg));
-        inpData.clear();
-        inpData.close();
+        // Getting reference name
+        refName = allArgs[2];
+        // Opening Passfile
+        string refName = toLower(allArgs[2]);           // To store refName
+        string enPass = getPass(refName);               // To store encrypted password from database
         // If reference name not found
-        if (enPass.compare("Not Found") == 0) {
-            cout << "Reference name not found in database !";
-            // Exitting from program
+        if (enPass.compare("NA") == 0) {
+            cout << "Reference name not found in database" << endl;
             return 0;
         }
-        else {
-            // Decrypting password and outputting
-            cout << inpDecrypt(enPass) << endl;
-            // Exitting from program
-            return 0;
-        }        
+        // Decrypting password and outputting
+        cout << inpDecrypt(enPass) << endl;
+        // Exitting from program
+        return 0;
     }
     // For getting stored passwords refName list with comments
     else if (oprArg.compare("list") == 0) {
-        // Opening database
-        inpData.open(dataFileName);
-        getList(inpData);
-        inpData.clear();
-        inpData.close();
+        getList();
         return 0;
     }
     return 0;

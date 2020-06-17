@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <filesystem>
 #include "Crypto.h"
 #include "Helper.h"
 #include "PassMan.h"
@@ -51,94 +52,63 @@ string getReqInput() {
 }
 
 // Method to add a new password to the database
-void addPass(ofstream& outData) {
-	// Declaring vars
-	string refName;										// To store reference name of a password
+void addPass() {
 	string passCom;										// To store commments about passwrds
 	string actPass;										// To store the actual password
 	string conPass;										// To store the confirmation password
 
-	cout << "Enter reference name for password :  ";
-	refName = getReqInput();
-	// Checking if duplicate refName
-	ifstream tempFile(dataFileName);
-	if (checkRefName(tempFile, refName) == true) {
-		cout << "Reference name already in use, please enter a different reference name !" << endl;
-		tempFile.clear();
-		tempFile.close();
+	cout << "Comments (Optional) : ";
+	getline(cin, passCom);
+	cout << "Enter password : ";
+	actPass = getReqInput();
+	cout << "Confirm password : ";
+	conPass = getReqInput();
+
+	// Checking if conPass == actPass
+	if (conPass.compare(actPass) == 0) {
+		// Adding data to database
+		outData << inpEncrypt(actPass) << " " << passCom << "\n";
+		cout << "Successfully stored password !" << endl;
 	}
 	else {
-		tempFile.clear();
-		tempFile.close();
-		cout << "Comments (Optional) : ";
-		getline(cin, passCom);
-		cout << "Enter password : ";
-		actPass = getReqInput();
-		cout << "Confirm password : ";
-		conPass = getReqInput();
-
-		// Checking if conPass == actPass
-		if (conPass.compare(actPass) == 0) {
-			// Adding data to database
-			outData << refName << "," << passCom << "," << inpEncrypt(actPass) << endl;
-			outData.clear();
-			cout << "Successfully stored password !" << endl;
-		}
-		else {
-			cout << "Confirmation failed ! Please try again !";
-		}
+		cout << "Confirmation failed ! Please try again !";
 	}
 }
 
-// Method to find an existing password from database using reference name
-string getPass(ifstream& inData, string searchItem) {
-	string line;									// To store each line of inData
-	string enPass;									// To store the encrypted password found from database
-	bool isFound = false;							// To store whether refName found in database or not
-	searchItem = toLower(searchItem);
-	// Opening database file
-	while (true) {
-		// Getting each line from inData
-		getline(inData, line);
-		line = toLower(line);
-
-		// Checking if blank line, i.e, end of file
-		if (line.compare("") == 0) {
-			break;
-		}
-
-		// Checking for match case
-		if (searchItem.compare(line.substr(0, searchItem.length())) == 0) {
-			// Flagging as found
-			isFound = true;
-			// Getting password for associated reference name
-			enPass = subStr(line, ',', 2, 3);
-			return enPass;
-		}
+// Method to get encrypted pass from database
+string getPass(string refName) {
+	string enPass;									// To store encrypted password
+	// If reference name not found
+	if (filesystem::exists(dataLocation + refName + ".pass") == false) {
+		// Exitting from program
+		return "NA";
 	}
-	// If not found
-	if (isFound == false) {
-		return "Not Found";
-	}
+	inpData.open(dataLocation + refName + ".pass");
+	getline(inpData, enPass);
+	inpData.clear();
+	inpData.close();
+	return enPass;
 }
 
 // Method to get the list of all passwords stored by pass-man and displaying only refName and comments
-void getList(ifstream& inpFile) {
-	string line;									// To store each line of inpFile
-	string refName;									// To store the reference name
-	string passCom;									// To store the comment
-	while (true) {
-		getline(inpFile, line);
-		// If end of file, i.e, blank file
-		if (line.compare("") == 0) {
-			break;
-		}
+void getList() {
+	string refName;									// To store file name
+	string passCom;									// To store comment
+	// Iterating through directory
+	for (auto& file : filesystem::directory_iterator(dataLocation)) {
 		// Getting refName
-		refName = line.substr(0, line.find(','));
-		// Getting comment
-		passCom = subStr(line, ',', 1, 2);
+		refName = file.path().string().substr(dataLocation.length());
+		refName = refName.substr(0, refName.length() - 5);
+		
+		// Getting comment from file
+		inpData.open(dataLocation + refName + ".pass");
+		getline(inpData, passCom);
+		inpData.clear();
+		inpData.close();
+		passCom = passCom.substr(passCom.find(' ') + 1);
+
 		// Displaying
 		cout << "Reference Name : " << refName << endl;
-		cout << "Comments       : " << passCom << + "\n" << endl;
+		cout << "Comments       : " << passCom << "\n" << endl;
 	}
 }
