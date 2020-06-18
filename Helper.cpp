@@ -1,11 +1,9 @@
 // This file contains various helper methods
-
+#include <iostream>
 #include <string>
 
-using namespace std;
-
 // Method to convert a string to lowercase
-string toLower(string inpStr) {
+std::string toLower(std::string inpStr) {
 	int strLen = inpStr.length();				// To store length of string
 	for (int i = 0; i < strLen; i++) {
 		inpStr[i] = tolower(inpStr[i]);
@@ -14,10 +12,10 @@ string toLower(string inpStr) {
 }
 
 // Method to get a substring from a string between two occurences of a giver char
-string subStr(string line, char reqChar, int firstOccur, int secondOccur) {
+std::string subStr(std::string line, char reqChar, int firstOccur, int secondOccur) {
 	int numOccur = 0;								// To store occurence number of reqChar
 	int lineLen = line.length();					// To store length of line
-	string outStr = "";								// To store output substring
+	std::string outStr = "";						// To store output substring
 	for (int i = 0; i < lineLen; i++) {
 		// Checking for the char
 		if (line[i] == reqChar) {
