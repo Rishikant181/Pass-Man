@@ -50,7 +50,7 @@ std::string getReqInput() {
 }
 
 // Method to add a new password to the database
-void addPass() {
+bool addPass(std::string refName) {
 	std::string passCom;										// To store commments about passwrds
 	std::string actPass;										// To store the actual password
 	std::string conPass;										// To store the confirmation password
@@ -65,29 +65,33 @@ void addPass() {
 	// Checking if conPass == actPass
 	if (conPass.compare(actPass) == 0) {
 		// Adding data to database
+		outFile.open(dataLocation + refName + ".pass");
 		outFile << inpEncrypt(actPass) << " " << passCom << "\n";
 		outFile.clear();
 		outFile.close();
-		std::cout << "Successfully stored password !" << endl;
+		return true;
 	}
 	else {
 		std::cout << "Confirmation failed ! Please try again !";
+		return false;
 	}
 }
 
 // Method to get encrypted pass from database
-std::string getPass(std::string refName) {
+bool getPass(std::string refName) {
 	std::string enPass;											// To store encrypted password
 	// If reference name not found
 	if (filesystem::exists(dataLocation + refName + ".pass") == false) {
 		// Exitting from program
-		return "NA";
+		return false;
 	}
+	inpFile.open(dataLocation + refName + ".pass");
 	std::getline(inpFile, enPass);
 	inpFile.clear();
 	inpFile.close();
 	enPass = enPass.substr(0, enPass.find(' '));
-	return enPass;
+	std::cout << inpDecrypt(enPass);
+	return true;
 }
 
 // Method to get the list of all passwords stored by pass-man and displaying only refName and comments
@@ -125,6 +129,7 @@ bool editPass(string refName) {
 	// If refName exists
 	if (filesystem::exists(dataLocation + refName + ".pass") == true) {
 		// Storing original line temporarily
+		inpFile.open(dataLocation + refName + ".pass");
 		std::getline(inpFile, line);
 		inpFile.clear();
 		inpFile.close();
@@ -183,7 +188,7 @@ bool editPass(string refName) {
 			newPassCon = getReqInput();
 
 			// Checking for confirmation
-			if (newPass.compare(newPassCom) != 0) {
+			if (newPass.compare(newPassCon) != 0) {
 				std::cout << "Confirmation failed !" << endl;
 				return false;
 			}
@@ -193,7 +198,7 @@ bool editPass(string refName) {
 
 			// Writing new data
 			outFile.open(dataLocation + refName + ".pass");
-			outFile << newPass + line.substr(line.find(' '));
+			outFile << inpEncrypt(newPass) + line.substr(line.find(' '));
 			outFile.clear();
 			outFile.close();
 			return true;
@@ -203,11 +208,35 @@ bool editPass(string refName) {
 			return false;
 		}
 		}
-
 	}
 	// If refName does not exist
 	else {
 		std::cout << "Reference name not found, password does not exist" << endl;
+		return false;
+	}
+}
+
+// Method to delete a stored password
+bool delPass(std::string refName) {
+	std::string delChoice;											// To store confirmation choice
+	// Checking if reference name does not exist
+	if (filesystem::exists(dataLocation + refName + ".pass") == false) {
+		std::cout << "No such reference name found !" << endl;
+		return false;
+	}
+	// If exists
+	std::cout << "Are you sure you want to delete " << refName << "?(y/n) : ";
+	std::getline(cin, delChoice);
+
+	// If confirmed yes
+	if (toLower(delChoice).compare("y") == 0) {
+		// Deleting
+		filesystem::remove(dataLocation + refName + ".pass");
+		return true;
+	}
+	// If no
+	else {
+		std::cout << "Operation cancelled" << endl;
 		return false;
 	}
 }

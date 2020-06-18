@@ -64,34 +64,42 @@ int main(int nArgs, char *allArgs[]) {
     
     // For adding password
     if (oprArg.compare("add") == 0) {
+        bool isAdded;                                    // To store whether password added or not
+        
         // Getting reference name
         refName = toLower(allArgs[2]);
         
-        outFile.open(dataLocation + refName + ".pass");
         // Calling addPass method of MangMethods file to add a new password
-        addPass();
+        isAdded = addPass(refName);
         
-        // Exiting from program
-        return 0;
+        // Checking status
+        if (isAdded == true) {
+            std::cout << "Successfully stored password !" << endl;
+            return 0;
+        }
+        else {
+            std::cout << "No password was added" << endl;
+            return 0;
+        }
     }
     // For getting password
     else if (oprArg.compare("get") == 0) {
+        bool isPresent;                                      // To store whether reference name present or not
+
         // Getting reference name
         refName = toLower(allArgs[2]);
         
-        inpFile.open(dataLocation + refName + ".pass");
-        // Opening Passfile
+        // Getting password
         std::string refName = toLower(allArgs[2]);           // To store refName
-        std::string enPass = getPass(refName);               // To store encrypted password from database
+        
+        // Calling method to get pass
+        isPresent = getPass(refName);
 
-        // If reference name not found
-        if (enPass.compare("NA") == 0) {
-            std::cout << "Reference name not found in database" << endl;
+        // Checking status
+        if (isPresent == false) {
+            std::cout << "No such reference name found !" << endl;
             return 0;
         }
-        
-        // Decrypting password and outputting
-        std::cout << inpDecrypt(enPass) << endl;
         
         // Exitting from program
         return 0;
@@ -105,9 +113,10 @@ int main(int nArgs, char *allArgs[]) {
     else if (oprArg.compare("edit") == 0) {
         bool isEdited;                                  // To store whether password edited or not
         
-        inpFile.open(dataLocation + refName + ".pass");
         // Getting reference name
         refName = toLower(allArgs[2]);
+        
+        // Editing and storing status
         isEdited = editPass(refName);
 
         // Checking if changes made
@@ -118,6 +127,26 @@ int main(int nArgs, char *allArgs[]) {
             std::cout << "No changes were made" << endl;
         }
         return 0;
+    }
+    // For deleting a stored password
+    else if (oprArg.compare("del") == 0) {
+        bool isDeleted;                                     // To store whether password deleted or not
+        
+        // Getting reference name
+        refName = toLower(allArgs[2]);
+
+        // Deleting
+        isDeleted = delPass(refName);
+
+        // Checking status
+        if (isDeleted == true) {
+            std::cout << "Password deletion successful !" << endl;
+            return 0;
+        }
+        else {
+            std::cout << "No changes were made" << endl;
+            return 0;
+        }
     }
     return 0;
 }
