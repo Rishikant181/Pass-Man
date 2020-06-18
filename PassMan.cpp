@@ -7,6 +7,7 @@
 #include "Crypto.h"
 #include "Helper.h"
 #include "MangMethods.h"
+#include "SecMethods.h"
 
 // Global vars
 int enKeyMul = 0;                                       // To store necryption key multiplicative part
@@ -14,11 +15,15 @@ int enKeyAdd = 0;                                       // To store necryption k
 
 // Vars to store files names
 std::string enFileName = "Key\\EncryptionKey.key";      // To store encryption key file name
+std::string auFileName = "Key\\AuthPass.key";           // To store authorization password
 std::string dataLocation = "Data\\";                    // To store location of data
 
 // Files to handle reading-writing of database
 std::ifstream inpFile;                                  // File to handle reading from file
-std::ofstream outFile;                                  // File to handle writing to file  
+std::ofstream outFile;                                  // File to handle writing to file
+
+// Other vars
+std::string authPass;                                   // To store authorization password
 
 // Method to load encryption key
 void getKey() {
@@ -35,16 +40,26 @@ void getKey() {
 }
 
 void firstInit() {
-    if (filesystem::exists(dataLocation.substr(0, dataLocation.find('\\'))) == false) {
+    if (std::filesystem::exists(enFileName) == false) {
         std::cout << "Setting up pass-man for 1st time use ............." << endl;
 
         // Creating directory to store data
-        filesystem::create_directory("Key");
-        filesystem::create_directory("Data");
+        std::filesystem::create_directory("Key");
+        std::filesystem::create_directory("Data");
 
+        // Generating new encryption key
         enKey();
 
         std::cout << "Successfully generated Database file and Encryption Key !" << endl;
+
+        // Checking status of authorization key
+        bool hasAuthKey = authKey();
+        if (hasAuthKey == true) {
+            std::cout << "Successfully set up authorization key !" << endl;
+        }
+        else {
+            std::cout << "No authorization key set up ! Your passwords are vulnerable !" << endl;
+        }
     }
     // Getting encryption key
     inpFile.open(enFileName);
@@ -60,6 +75,14 @@ int main(int nArgs, char *allArgs[]) {
     std::string oprArg = toLower(allArgs[1]);            // To store operation argument
     std::string refName;                                 // To store reference name
         
+    // Checking authorization
+    bool authStatus = checkAuth();                       // To store authorization status
+    // If authorization fails
+    if (authStatus == false) {
+        std::cout << "Failed to authorize. Suspending further operations" << endl;
+        return 0;
+    }
+
     // To determine operation
     
     // For adding password
@@ -146,6 +169,18 @@ int main(int nArgs, char *allArgs[]) {
         else {
             std::cout << "No changes were made" << endl;
             return 0;
+        }
+    }
+    // For changing/setting up authorization key
+    else if (oprArg.compare("auth") == 0) {
+        bool isAuthDone = authKey();
+        // Checking status
+        if (isAuthDone == true) {
+            std::cout << "Authorization key changed successfully" << endl;
+            return 0;
+        }
+        else {
+            std::cout << "Operation cancelled" << endl;
         }
     }
     return 0;

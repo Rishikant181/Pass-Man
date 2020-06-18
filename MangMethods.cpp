@@ -7,31 +7,6 @@
 #include "Helper.h"
 #include "PassMan.h"
 
-// Method to check for duplicate refName, return false if not present and true otherwise
-bool checkRefName(ifstream& inpFile, string inpRefName) {
-	std::string line;										// To store each line of inpFile
-	std::string refName;									// To store extracted refName from file
-	inpRefName = toLower(inpRefName);
-
-	// Getting each line from file
-	while (true) {
-		std::getline(inpFile, line);
-		// Checking for blank line, i.e, end of file
-		if (line.compare("") == 0) {
-			return false;
-		}
-		// For non-blank line
-		refName = toLower(line.substr(0, line.find(',')));
-		
-		// Checking for match
-		if (refName.compare(inpRefName) == 0) {
-			return true;
-		}
-	}
-	// For not present
-	return false;
-}
-
 // Method to get non-optional input
 std::string getReqInput() {
 	std::string inpVal;											// To store input string
@@ -49,11 +24,43 @@ std::string getReqInput() {
 	}
 }
 
+// Method to change previous auth key
+bool changeAuthKey() {
+	std::string newAuthKey;										// To store new auth key
+	std::string conAuthKey;										// To store auth key confirmation
+
+	std::cout << "Enter new authorization key : " << endl;
+
+	// Taking new auth key
+	newAuthKey = getReqInput();
+
+	// Confirming auth key
+	std::getline(std::cin, conAuthKey);
+
+	// Chekcing confirmation
+	if (conAuthKey.compare(newAuthKey) != 0) {
+		std::cout << "Confirmation failed !" << endl;
+		return false;
+	}
+
+	// Storing new auth key
+	outFile.open(auFileName);
+	outFile << inpEncrypt(newAuthKey) << "\n";
+	outFile.clear();
+	outFile.close();
+}
+
 // Method to add a new password to the database
 bool addPass(std::string refName) {
 	std::string passCom;										// To store commments about passwrds
 	std::string actPass;										// To store the actual password
 	std::string conPass;										// To store the confirmation password
+
+	// Checking if duplicate refName
+	if (std::filesystem::exists(dataLocation + refName + ".pass") == true) {
+		std::cout << "Reference name already exists, please enter another name" << endl;
+		return false;
+	}
 
 	std::cout << "Comments (Optional) : ";
 	std::getline(cin, passCom);
@@ -81,7 +88,7 @@ bool addPass(std::string refName) {
 bool getPass(std::string refName) {
 	std::string enPass;											// To store encrypted password
 	// If reference name not found
-	if (filesystem::exists(dataLocation + refName + ".pass") == false) {
+	if (std::filesystem::exists(dataLocation + refName + ".pass") == false) {
 		// Exitting from program
 		return false;
 	}
@@ -99,7 +106,7 @@ void getList() {
 	std::string refName;									// To store file name
 	std::string passCom;									// To store comment
 	// Iterating through directory
-	for (auto& file : filesystem::directory_iterator(dataLocation)) {
+	for (auto& file : std::filesystem::directory_iterator(dataLocation)) {
 		// Getting refName
 		refName = file.path().string().substr(dataLocation.length());
 		refName = refName.substr(0, refName.length() - 5);
@@ -127,7 +134,7 @@ bool editPass(string refName) {
 	std::string newPass;									// To store new password
 	std::string newPassCon;									// To store new password confirmation
 	// If refName exists
-	if (filesystem::exists(dataLocation + refName + ".pass") == true) {
+	if (std::filesystem::exists(dataLocation + refName + ".pass") == true) {
 		// Storing original line temporarily
 		inpFile.open(dataLocation + refName + ".pass");
 		std::getline(inpFile, line);
@@ -156,7 +163,7 @@ bool editPass(string refName) {
 			newRefName = getReqInput();
 
 			// Deleting old data
-			filesystem::remove(dataLocation + refName + ".pass");
+			std::filesystem::remove(dataLocation + refName + ".pass");
 
 			// Writing new data
 			outFile.open(dataLocation + newRefName + ".pass");
@@ -171,7 +178,7 @@ bool editPass(string refName) {
 			std::getline(cin, newPassCom);
 
 			// Deleting old data
-			filesystem::remove(dataLocation + refName + ".pass");
+			std::filesystem::remove(dataLocation + refName + ".pass");
 
 			// Writing new data
 			outFile.open(dataLocation + refName + ".pass");
@@ -194,7 +201,7 @@ bool editPass(string refName) {
 			}
 			
 			// Deleting old data
-			filesystem::remove(dataLocation + refName + ".pass");
+			std::filesystem::remove(dataLocation + refName + ".pass");
 
 			// Writing new data
 			outFile.open(dataLocation + refName + ".pass");
@@ -220,7 +227,7 @@ bool editPass(string refName) {
 bool delPass(std::string refName) {
 	std::string delChoice;											// To store confirmation choice
 	// Checking if reference name does not exist
-	if (filesystem::exists(dataLocation + refName + ".pass") == false) {
+	if (std::filesystem::exists(dataLocation + refName + ".pass") == false) {
 		std::cout << "No such reference name found !" << endl;
 		return false;
 	}
@@ -231,12 +238,53 @@ bool delPass(std::string refName) {
 	// If confirmed yes
 	if (toLower(delChoice).compare("y") == 0) {
 		// Deleting
-		filesystem::remove(dataLocation + refName + ".pass");
+		std::filesystem::remove(dataLocation + refName + ".pass");
 		return true;
 	}
 	// If no
 	else {
 		std::cout << "Operation cancelled" << endl;
 		return false;
+	}
+}
+
+// Method to change/create new authorization key
+bool authKey() {
+	std::string newAuthKey;										// To store new authorization key
+	// Checking if previous authorization key present
+	if (std::filesystem::exists(auFileName) == true) {
+		std::cout << "Authorization key has already been set up. Do you wish to change it ?(y/n) : ";
+		std::string aChoice;
+		std::getline(std::cin, aChoice);
+		// If yes
+		if (aChoice.compare("y") == 0) {
+			// Deleting previous auth key
+			std::filesystem::remove(auFileName);
+			
+			// Changing authorization key
+			changeAuthKey();
+			
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		std::cout << "No authorization key has been set up. Do you wish to create one now?(y/n) : ";
+		std::string aChoice;
+		std::getline(std::cin, aChoice);
+		// If yes
+		if (aChoice.compare("y") == 0) {
+			if (changeAuthKey() == true) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
 	}
 }

@@ -1,2 +1,6 @@
 ﻿  MangMethods.cpp
+  PassMan.cpp
+  SecMethods.cpp
+  Generating Code...
+D:\Developement\C++\pass-man\MangMethods.cpp(51): warning C4715: 'changeAuthKey': not all control paths return a value
   pass-man.vcxproj -> D:\Developement\C++\pass-man\x64\Debug\pass-man.exe

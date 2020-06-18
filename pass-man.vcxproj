@@ -145,12 +145,14 @@
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="MangMethods.cpp" />
     <ClCompile Include="PassMan.cpp" />
+    <ClCompile Include="SecMethods.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="MangMethods.h" />
     <ClInclude Include="PassMan.h" />
+    <ClInclude Include="SecMethods.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

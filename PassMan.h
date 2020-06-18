@@ -1,11 +1,10 @@
 #include <string>
 #include <fstream>
 
-using namespace std;
-
 extern int enKeyMul;
 extern int enKeyAdd;
-extern string dataLocation;
-extern string enFileName;
-extern ifstream inpFile;
-extern ofstream outFile;
+extern std::string dataLocation;
+extern std::string enFileName;
+extern std::string auFileName;
+extern std::ifstream inpFile;
+extern std::ofstream outFile;
