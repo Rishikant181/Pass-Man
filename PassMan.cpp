@@ -58,9 +58,6 @@ void firstInit() {
         if (hasAuthKey == true) {
             std::cout << "Successfully set up authorization key !" << std::endl;
         }
-        else {
-            std::cout << "*WARNING* No authorization key set up ! Your passwords are vulnerable !" << std::endl;
-        }
     }
     // Getting encryption key
     inpFile.open(enFileName);
