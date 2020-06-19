@@ -13,7 +13,8 @@
 int enKeyMul = 0;                                       // To store necryption key multiplicative part
 int enKeyAdd = 0;                                       // To store necryption key additive part
 
-// Vars to store files names
+// Vars to store files names and locations
+std::string workDir;                                    // To store location of working directory
 std::string enFileName = "Key\\EncryptionKey.key";      // To store encryption key file name
 std::string auFileName = "Key\\AuthPass.key";           // To store authorization password
 std::string dataLocation = "Data\\";                    // To store location of data
@@ -41,24 +42,24 @@ void getKey() {
 
 void firstInit() {
     if (std::filesystem::exists(enFileName) == false) {
-        std::cout << "Setting up pass-man for 1st time use ............." << endl;
+        std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
 
         // Creating directory to store data
-        std::filesystem::create_directory("Key");
-        std::filesystem::create_directory("Data");
+        std::filesystem::create_directory(workDir + "Key");
+        std::filesystem::create_directory(workDir + "Data");
 
         // Generating new encryption key
         enKey();
 
-        std::cout << "Successfully generated Database file and Encryption Key !" << endl;
+        std::cout << "Successfully generated Database file and Encryption Key !" << std::endl;
 
         // Checking status of authorization key
         bool hasAuthKey = authKey();
         if (hasAuthKey == true) {
-            std::cout << "Successfully set up authorization key !" << endl;
+            std::cout << "Successfully set up authorization key !" << std::endl;
         }
         else {
-            std::cout << "No authorization key set up ! Your passwords are vulnerable !" << endl;
+            std::cout << "*WARNING* No authorization key set up ! Your passwords are vulnerable !" << std::endl;
         }
     }
     // Getting encryption key
@@ -70,6 +71,17 @@ void firstInit() {
 }
 
 int main(int nArgs, char *allArgs[]) {
+    // Initialising working directory
+    
+    // Storing location temporarily
+    std::string loc = allArgs[0];
+    // Storing actual location
+    workDir = loc.substr(0, loc.find_last_of('\\') + 1);
+    // Changing file names
+    enFileName = workDir + enFileName;
+    auFileName = workDir + auFileName;
+    dataLocation = workDir + dataLocation;
+    
     // Variable declaraion and initialisation
     firstInit();
     std::string oprArg = toLower(allArgs[1]);            // To store operation argument
@@ -79,7 +91,7 @@ int main(int nArgs, char *allArgs[]) {
     bool authStatus = checkAuth();                       // To store authorization status
     // If authorization fails
     if (authStatus == false) {
-        std::cout << "Failed to authorize. Suspending further operations" << endl;
+        std::cout << "Failed to authorize. Suspending further operations" << std::endl;
         return 0;
     }
 
@@ -97,13 +109,12 @@ int main(int nArgs, char *allArgs[]) {
         
         // Checking status
         if (isAdded == true) {
-            std::cout << "Successfully stored password !" << endl;
-            return 0;
+            std::cout << "Successfully stored password !" << std::endl;
         }
         else {
-            std::cout << "No password was added" << endl;
-            return 0;
+            std::cout << "No password was added" << std::endl;
         }
+        return 0;
     }
     // For getting password
     else if (oprArg.compare("get") == 0) {
@@ -120,8 +131,7 @@ int main(int nArgs, char *allArgs[]) {
 
         // Checking status
         if (isPresent == false) {
-            std::cout << "No such reference name found !" << endl;
-            return 0;
+            std::cout << "No such reference name found !" << std::endl;
         }
         
         // Exitting from program
@@ -144,10 +154,10 @@ int main(int nArgs, char *allArgs[]) {
 
         // Checking if changes made
         if (isEdited == true) {
-            std::cout << "Password update succesful" << endl;
+            std::cout << "Password update succesful" << std::endl;
         }
         else {
-            std::cout << "No changes were made" << endl;
+            std::cout << "No changes were made" << std::endl;
         }
         return 0;
     }
@@ -163,57 +173,56 @@ int main(int nArgs, char *allArgs[]) {
 
         // Checking status
         if (isDeleted == true) {
-            std::cout << "Password deletion successful !" << endl;
-            return 0;
+            std::cout << "Password deletion successful !" << std::endl;
         }
         else {
-            std::cout << "No changes were made" << endl;
-            return 0;
+            std::cout << "No changes were made" << std::endl;
         }
+        return 0;
     }
     // For changing/setting up authorization key
     else if (oprArg.compare("auth") == 0) {
         bool isAuthDone = authKey();
         // Checking status
         if (isAuthDone == true) {
-            std::cout << "Authorization key changed successfully" << endl;
-            return 0;
+            std::cout << "Authorization key changed successfully" << std::endl;
         }
         else {
-            std::cout << "Operation cancelled" << endl;
+            std::cout << "Operation cancelled" << std::endl;
         }
+        return 0;
     }
     // For displaying help
     else if (oprArg.compare("help") == 0) {
         // Displaying help
-        std::cout << " - This commandline utility is used to store store passwords along with comments" << endl;
-        std::cout << " - Each password is addressed by using a reference name which is set by user" << endl;
-        std::cout << " - If the user wants, he/she may set up an authorization key using the auth command so that all passwords can be accessed provived you have the authorization password" << endl;
-        std::cout << "\nThe following commands are available to manage passwords : \n" << endl;
+        std::cout << " - This commandline utility is used to store store passwords along with comments" << std::endl;
+        std::cout << " - Each password is addressed by using a reference name which is set by user" << std::endl;
+        std::cout << " - If the user wants, he/she may set up an authorization key using the auth command so that all passwords can be accessed provived you have the authorization password" << std::endl;
+        std::cout << "\nThe following commands are available to manage passwords : \n" << std::endl;
         // Help for add
-        std::cout << "1. add  : " << endl;
-        std::cout << "       Description : This command is used to store a new password" << endl;
-        std::cout << "       Usage       : pass-man add <reference name to create>\n" << endl;
+        std::cout << "1. add  : " << std::endl;
+        std::cout << "       Description : This command is used to store a new password" << std::endl;
+        std::cout << "       Usage       : pass-man add <reference name to create>\n" << std::endl;
         // Help for get
-        std::cout << "2. get  : " << endl;
-        std::cout << "       Description : This command is used to retrieve a stored password" << endl;
-        std::cout << "       Usage       : pass-man get <reference name to retrieve>\n" << endl;
+        std::cout << "2. get  : " << std::endl;
+        std::cout << "       Description : This command is used to retrieve a stored password" << std::endl;
+        std::cout << "       Usage       : pass-man get <reference name to retrieve>\n" << std::endl;
         // Help for list
-        std::cout << "3. list : " << endl;
-        std::cout << "       Description : This command is used display list of all reference names stored along with their comments" << endl;
-        std::cout << "       Usage       : pass-man list\n" << endl;
+        std::cout << "3. list : " << std::endl;
+        std::cout << "       Description : This command is used display list of all reference names stored along with their comments" << std::endl;
+        std::cout << "       Usage       : pass-man list\n" << std::endl;
         // Help for edit
-        std::cout << "4. edit : " << endl;
-        std::cout << "       Description : This command is used to edit a stored password" << endl;
-        std::cout << "       Usage       : pass-man edit <reference name to edit>\n" << endl;
+        std::cout << "4. edit : " << std::endl;
+        std::cout << "       Description : This command is used to edit a stored password" << std::endl;
+        std::cout << "       Usage       : pass-man edit <reference name to edit>\n" << std::endl;
         // Help for del
-        std::cout << "5. del  : " << endl;
-        std::cout << "       Description : This command is used to delete a stored password" << endl;
-        std::cout << "       Usage       : pass-man del <reference name to delete>\n" << endl;
+        std::cout << "5. del  : " << std::endl;
+        std::cout << "       Description : This command is used to delete a stored password" << std::endl;
+        std::cout << "       Usage       : pass-man del <reference name to delete>\n" << std::endl;
         // Help for add
-        std::cout << "6. auth : " << endl;
-        std::cout << "       Description : This command is used to set up/change authorization key" << endl;
-        std::cout << "       Usage       : pass-man auth\n" << endl;
+        std::cout << "6. auth : " << std::endl;
+        std::cout << "       Description : This command is used to set up/change authorization key" << std::endl;
+        std::cout << "       Usage       : pass-man auth\n" << std::endl;
 
         return 0;
     }

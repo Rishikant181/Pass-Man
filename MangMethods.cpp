@@ -19,7 +19,7 @@ std::string getReqInput() {
 		}
 		// If invalid input
 		else {
-			std::cout << "Please enter a valid input !" << endl;
+			std::cout << "Please enter a valid input !" << std::endl;
 		}
 	}
 }
@@ -29,7 +29,7 @@ bool changeAuthKey() {
 	std::string newAuthKey;										// To store new auth key
 	std::string conAuthKey;										// To store auth key confirmation
 
-	std::cout << "Enter new authorization key : " << endl;
+	std::cout << "Enter new authorization key : " << std::endl;
 
 	// Taking new auth key
 	newAuthKey = getReqInput();
@@ -39,7 +39,7 @@ bool changeAuthKey() {
 
 	// Chekcing confirmation
 	if (conAuthKey.compare(newAuthKey) != 0) {
-		std::cout << "Confirmation failed !" << endl;
+		std::cout << "Confirmation failed !" << std::endl;
 		return false;
 	}
 
@@ -58,7 +58,7 @@ bool addPass(std::string refName) {
 
 	// Checking if duplicate refName
 	if (std::filesystem::exists(dataLocation + refName + ".pass") == true) {
-		std::cout << "Reference name already exists, please enter another name" << endl;
+		std::cout << "Reference name already exists, please enter another name" << std::endl;
 		return false;
 	}
 
@@ -119,8 +119,8 @@ void getList() {
 		passCom = passCom.substr(passCom.find(' ') + 1);
 
 		// Displaying
-		std::cout << "Reference Name : " << refName << endl;
-		std::cout << "Comments       : " << passCom << "\n" << endl;
+		std::cout << "\nReference Name : " << refName << std::endl;
+		std::cout << "Comments       : " << passCom << std::endl;
 	}
 }
 
@@ -142,9 +142,9 @@ bool editPass(string refName) {
 		inpFile.close();
 		
 		// Asking for operation
-		std::cout << "1. Change reference name" << endl;
-		std::cout << "2. Change comment" << endl;
-		std::cout << "3. Change password" << endl;
+		std::cout << "1. Change reference name" << std::endl;
+		std::cout << "2. Change comment" << std::endl;
+		std::cout << "3. Change password" << std::endl;
 		
 		try {
 			// Taking choice
@@ -152,7 +152,7 @@ bool editPass(string refName) {
 			oprChoice = std::stoi(choice);
 		}
 		catch (invalid_argument ia) {
-			std::cout << "Please enter number only !" << endl;
+			std::cout << "Please enter number only !" << std::endl;
 			return false;
 		}
 
@@ -196,7 +196,7 @@ bool editPass(string refName) {
 
 			// Checking for confirmation
 			if (newPass.compare(newPassCon) != 0) {
-				std::cout << "Confirmation failed !" << endl;
+				std::cout << "Confirmation failed !" << std::endl;
 				return false;
 			}
 			
@@ -218,7 +218,7 @@ bool editPass(string refName) {
 	}
 	// If refName does not exist
 	else {
-		std::cout << "Reference name not found, password does not exist" << endl;
+		std::cout << "Reference name not found, password does not exist" << std::endl;
 		return false;
 	}
 }
@@ -228,7 +228,7 @@ bool delPass(std::string refName) {
 	std::string delChoice;											// To store confirmation choice
 	// Checking if reference name does not exist
 	if (std::filesystem::exists(dataLocation + refName + ".pass") == false) {
-		std::cout << "No such reference name found !" << endl;
+		std::cout << "No such reference name found !" << std::endl;
 		return false;
 	}
 	// If exists
@@ -243,7 +243,7 @@ bool delPass(std::string refName) {
 	}
 	// If no
 	else {
-		std::cout << "Operation cancelled" << endl;
+		std::cout << "Operation cancelled" << std::endl;
 		return false;
 	}
 }
