@@ -30,6 +30,6 @@ bool checkAuth() {
 		}
 	}
 	// Default case when no authorization has been set up
-	std::cout << "*WARNING* No authorization has been set up. Your passwords are vulenrable !" << endl;
+	std::cout << "\n*WARNING* No authorization has been set up. Your passwords are vulenrable !\n" << endl;
 	return true;
 }

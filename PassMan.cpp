@@ -183,5 +183,39 @@ int main(int nArgs, char *allArgs[]) {
             std::cout << "Operation cancelled" << endl;
         }
     }
+    // For displaying help
+    else if (oprArg.compare("help") == 0) {
+        // Displaying help
+        std::cout << " - This commandline utility is used to store store passwords along with comments" << endl;
+        std::cout << " - Each password is addressed by using a reference name which is set by user" << endl;
+        std::cout << " - If the user wants, he/she may set up an authorization key using the auth command so that all passwords can be accessed provived you have the authorization password" << endl;
+        std::cout << "\nThe following commands are available to manage passwords : \n" << endl;
+        // Help for add
+        std::cout << "1. add  : " << endl;
+        std::cout << "       Description : This command is used to store a new password" << endl;
+        std::cout << "       Usage       : pass-man add <reference name to create>\n" << endl;
+        // Help for get
+        std::cout << "2. get  : " << endl;
+        std::cout << "       Description : This command is used to retrieve a stored password" << endl;
+        std::cout << "       Usage       : pass-man get <reference name to retrieve>\n" << endl;
+        // Help for list
+        std::cout << "3. list : " << endl;
+        std::cout << "       Description : This command is used display list of all reference names stored along with their comments" << endl;
+        std::cout << "       Usage       : pass-man list\n" << endl;
+        // Help for edit
+        std::cout << "4. edit : " << endl;
+        std::cout << "       Description : This command is used to edit a stored password" << endl;
+        std::cout << "       Usage       : pass-man edit <reference name to edit>\n" << endl;
+        // Help for del
+        std::cout << "5. del  : " << endl;
+        std::cout << "       Description : This command is used to delete a stored password" << endl;
+        std::cout << "       Usage       : pass-man del <reference name to delete>\n" << endl;
+        // Help for add
+        std::cout << "6. auth : " << endl;
+        std::cout << "       Description : This command is used to set up/change authorization key" << endl;
+        std::cout << "       Usage       : pass-man auth\n" << endl;
+
+        return 0;
+    }
     return 0;
 }
