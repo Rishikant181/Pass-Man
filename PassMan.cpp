@@ -220,6 +220,7 @@ int main(int nArgs, char *allArgs[]) {
         std::cout << "6. auth : " << std::endl;
         std::cout << "       Description : This command is used to set up/change authorization key" << std::endl;
         std::cout << "       Usage       : pass-man auth\n" << std::endl;
+        std::cout << "                     To remove authentication key, change key to blank\n" << std::endl;
 
         return 0;
     }

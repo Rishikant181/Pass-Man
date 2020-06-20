@@ -32,13 +32,30 @@ bool changeAuthKey() {
 	std::cout << "Enter new authorization key : ";
 
 	// Taking new auth key
-	newAuthKey = getReqInput();
+	std::getline(std::cin, newAuthKey);
+
+	// If user wants to remove auth key
+	if (newAuthKey.compare("") == 0) {
+		std::string conChoice;
+		// Asking confirmation
+		std::cout << "Are you sure you want to remove authentication ?(y/n) : ";
+		std::getline(std::cin, conChoice);
+		// If yes
+		if (toLower(conChoice).compare("y") == 0) {
+			std::filesystem::remove(auFileName);
+			return true;
+		}
+		// If no
+		else {
+			return false;
+		}
+	}
 
 	// Confirming auth key
 	std::cout << "Confirm authorization key   : ";
 	std::getline(std::cin, conAuthKey);
 
-	// Chekcing confirmation
+	// Checking confirmation
 	if (conAuthKey.compare(newAuthKey) != 0) {
 		std::cout << "Confirmation failed !" << std::endl;
 		return false;
