@@ -29,12 +29,13 @@ bool changeAuthKey() {
 	std::string newAuthKey;										// To store new auth key
 	std::string conAuthKey;										// To store auth key confirmation
 
-	std::cout << "Enter new authorization key : " << std::endl;
+	std::cout << "Enter new authorization key : ";
 
 	// Taking new auth key
 	newAuthKey = getReqInput();
 
 	// Confirming auth key
+	std::cout << "Confirm authorization key   : ";
 	std::getline(std::cin, conAuthKey);
 
 	// Chekcing confirmation
@@ -48,6 +49,8 @@ bool changeAuthKey() {
 	outFile << inpEncrypt(newAuthKey) << "\n";
 	outFile.clear();
 	outFile.close();
+
+	return true;
 }
 
 // Method to add a new password to the database

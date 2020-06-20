@@ -19,6 +19,8 @@ bool checkAuth() {
 		// Getting actual auth pass
 		inpFile.open(auFileName);
 		std::getline(inpFile, actAuthPass);
+		inpFile.clear();
+		inpFile.close();
 
 		// Checking for correct auth
 		// For successful authorization
