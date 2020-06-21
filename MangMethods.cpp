@@ -293,14 +293,17 @@ bool restorePass(std::string backLoc) {
 		return false;
 	}
 	
-	// Restoring data
-	try {
-		std::filesystem::copy(backLoc, dataLocation);
-	}
-	// If passwords exist
-	catch (exception e) {
-		std::cout << "Passwords already in location" << endl;
-		return false;
+	// Restoring data file by file
+	for (auto& fileName : std::filesystem::directory_iterator(backLoc)) {
+		// Trying to copy file
+		try {
+			std::filesystem::copy(std::filesystem::absolute(fileName.path()), dataLocation);
+		}
+		// If file already exists
+		catch (exception e) {
+			// Skip over to next file if this file already exists
+			continue;
+		}
 	}
 
 	return true;
