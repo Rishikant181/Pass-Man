@@ -269,10 +269,10 @@ bool delPass(std::string refName) {
 }
 
 // Method to backup passwords to specified location
-bool backPass(string backLoc) {
+bool backPass(std::string backLoc) {
 	// If specified location does not exist
 	if (std::filesystem::exists(backLoc) == false) {
-		std::cout << "Specified backup location does not exist ! Please specify a different location" << endl;
+		std::cout << "Specified location does not exist ! Please specify a different location" << endl;
 		return false;
 	}
 
@@ -281,6 +281,27 @@ bool backPass(string backLoc) {
 	backLoc = backLoc + "\\Pass-Man_Backup";
 	std::filesystem::create_directory(backLoc);
 	std::filesystem::copy(dataLocation, backLoc);
+
+	return true;
+}
+
+// Method tp restore passwords from specific location
+bool restorePass(std::string backLoc) {
+	// If specified location does not exist
+	if (std::filesystem::exists(backLoc) == false) {
+		std::cout << "Specified backup location does not exist ! Please specify a different location" << endl;
+		return false;
+	}
+	
+	// Restoring data
+	try {
+		std::filesystem::copy(backLoc, dataLocation);
+	}
+	// If passwords exist
+	catch (exception e) {
+		std::cout << "Passwords already in location" << endl;
+		return false;
+	}
 
 	return true;
 }

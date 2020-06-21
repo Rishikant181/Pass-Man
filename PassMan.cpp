@@ -185,6 +185,7 @@ int main(int nArgs, char *allArgs[]) {
         // Storing backup location
         backLoc = allArgs[2];
 
+        // Backing up passwords
         isBacked = backPass(backLoc);
 
         // Checking status
@@ -193,6 +194,26 @@ int main(int nArgs, char *allArgs[]) {
         }
         else {
             std::cout << "Backup failed !" << endl;
+        }
+        return 0;
+    }
+    // For restoring backed up passwords
+    else if (oprArg.compare("restore") == 0) {
+        bool isRestored;                                            // To store whether restored or not
+        std::string backLoc;                                        // To store backup location
+
+        // Storing backup location
+        backLoc = allArgs[2];
+
+        // Restoring from backup
+        isRestored = restorePass(backLoc);
+        
+        // Checking status
+        if (isRestored == true) {
+            std::cout << "Restore successfull !" << endl;
+        }
+        else {
+            std::cout << "Restore failed !" << endl;
         }
         return 0;
     }
@@ -216,31 +237,35 @@ int main(int nArgs, char *allArgs[]) {
         std::cout << " - If the user wants, he/she may set up an authorization key using the auth command so that all passwords can be accessed provived you have the authorization password" << std::endl;
         std::cout << "\nThe following commands are available to manage passwords : \n" << std::endl;
         // Help for add
-        std::cout << "1. add    : " << std::endl;
+        std::cout << "1. add     : " << std::endl;
         std::cout << "       Description : This command is used to store a new password" << std::endl;
         std::cout << "       Usage       : pass-man add <reference name to create>\n" << std::endl;
         // Help for get
-        std::cout << "2. get    : " << std::endl;
+        std::cout << "2. get     : " << std::endl;
         std::cout << "       Description : This command is used to retrieve a stored password" << std::endl;
         std::cout << "       Usage       : pass-man get <reference name to retrieve>\n" << std::endl;
         // Help for list
-        std::cout << "3. list   : " << std::endl;
+        std::cout << "3. list    : " << std::endl;
         std::cout << "       Description : This command is used display list of all reference names stored along with their comments" << std::endl;
         std::cout << "       Usage       : pass-man list\n" << std::endl;
         // Help for edit
-        std::cout << "4. edit   : " << std::endl;
+        std::cout << "4. edit    : " << std::endl;
         std::cout << "       Description : This command is used to edit a stored password" << std::endl;
         std::cout << "       Usage       : pass-man edit <reference name to edit>\n" << std::endl;
         // Help for del
-        std::cout << "5. del    : " << std::endl;
+        std::cout << "5. del     : " << std::endl;
         std::cout << "       Description : This command is used to delete a stored password" << std::endl;
         std::cout << "       Usage       : pass-man del <reference name to delete>\n" << std::endl;
         // Help for backup
-        std::cout << "6. backup : " << std::endl;
+        std::cout << "6. backup  : " << std::endl;
         std::cout << "       Description : This command is used create a backup of stored passwords" << std::endl;
         std::cout << "       Usage       : pass-man backup <folder to store backup to>\n" << std::endl;
+        // Help for restore
+        std::cout << "7. restore : " << std::endl;
+        std::cout << "       Description : This command is used passwords from a specified backup" << std::endl;
+        std::cout << "       Usage       : pass-man backup <path to backup>\n" << std::endl;
         // Help for add
-        std::cout << "7. auth   : " << std::endl;
+        std::cout << "8. auth    : " << std::endl;
         std::cout << "       Description : This command is used to set up/change authorization key" << std::endl;
         std::cout << "       Usage       : pass-man auth\n" << std::endl;
         std::cout << "                     To remove authentication key, change key to blank\n" << std::endl;
