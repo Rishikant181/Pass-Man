@@ -268,6 +268,23 @@ bool delPass(std::string refName) {
 	}
 }
 
+// Method to backup passwords to specified location
+bool backPass(string backLoc) {
+	// If specified location does not exist
+	if (std::filesystem::exists(backLoc) == false) {
+		std::cout << "Specified backup location does not exist ! Please specify a different location" << endl;
+		return false;
+	}
+
+	// Backing up data
+	// Creating folder
+	backLoc = backLoc + "\\Pass-Man_Backup";
+	std::filesystem::create_directory(backLoc);
+	std::filesystem::copy(dataLocation, backLoc);
+
+	return true;
+}
+
 // Method to change/create new authorization key
 bool authKey() {
 	std::string newAuthKey;										// To store new authorization key
