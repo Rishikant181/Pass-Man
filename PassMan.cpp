@@ -18,7 +18,7 @@ std::string workDir;                                    // To store location of 
 std::string enFileName = "Key\\EncryptionKey.key";      // To store encryption key file name
 std::string auFileName = "Key\\AuthPass.key";           // To store authorization password
 std::string dataLocation = "Data\\";                    // To store location of data
-std::string mailIdLoc = "Sec\\";                        // To store mail id of user
+std::string mailIdLoc = "Sec\\MailId.id";                        // To store mail id of user
 
 // Files to handle reading-writing of database
 std::ifstream inpFile;                                  // File to handle reading from file
@@ -220,6 +220,21 @@ int main(int nArgs, char *allArgs[]) {
         }
         return 0;
     }
+    // For changing/adding mail id
+    else if (oprArg.compare("mail") == 0) {
+        // Getting status
+        bool isMailIdChanged = setEmail();
+
+        // Checking status
+        if (isMailIdChanged == true) {
+            std::cout << "Mail id changed succesfully !" << std::endl;
+        }
+        else {
+            std::cout << "Maild id change failed" << std::endl;
+        }
+        
+        return 0;
+    }
     // For changing/setting up authorization key
     else if (oprArg.compare("auth") == 0) {
         bool isAuthDone = authKey();
@@ -232,6 +247,7 @@ int main(int nArgs, char *allArgs[]) {
         }
         return 0;
     }
+    // For changing email id
     // For displaying help
     else if (oprArg.compare("help") == 0) {
         // Displaying help

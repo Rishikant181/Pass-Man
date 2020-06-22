@@ -1,2 +1,3 @@
 D:\Developement\C++\pass-man\x64\Debug\pass-man.exe
 D:\Developement\C++\pass-man\x64\Debug\pass-man.pdb
+D:\Developement\C++\pass-man\x64\Debug\pass-man.vcxprojAssemblyReference.cache

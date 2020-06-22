@@ -6,5 +6,6 @@ extern int enKeyAdd;
 extern std::string dataLocation;
 extern std::string enFileName;
 extern std::string auFileName;
+extern std::string mailIdLoc;
 extern std::ifstream inpFile;
 extern std::ofstream outFile;

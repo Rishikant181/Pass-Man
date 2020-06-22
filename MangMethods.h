@@ -7,4 +7,5 @@ bool editPass(std::string refName);
 bool delPass(std::string refName);
 bool backPass(std::string backLoc);
 bool restorePass(std::string backLoc);
+bool setEmail();
 bool authKey();

@@ -6,7 +6,7 @@ using namespace System::Net;
 
 // Method to send a mail to a specified email id and specific data
 bool sendMail(std::string toAddress, std::string mailHeading, std::string mailBody) {
-	Mail::SmtpClient^ smtpClient;								// To store the smtp client
+	Mail::SmtpClient^ smtpClient = gcnew Mail::SmtpClient();		// To store the smtp client
 	
 	// Converting std::string to System::String
 	System::String^ toAdd = gcnew System::String(toAddress.c_str());

@@ -358,9 +358,26 @@ bool setEmail() {
 	std::string mailId;											// To store mail-id entered by user
 	std::string oneTimePass;									// To store one time password
 	std::string inputOtp;										// To store otp entered by user
+	std::string uChoice;										// To store user choice
 
+	// Checking if mail already set up
+	// If does not exist
+	if (std::filesystem::exists(mailIdLoc) == false) {
+		std::cout << "Mail has not been set up. Do you want to set it now ?(y/n) : ";
+	}
+	// If exists
+	else {
+		std::cout << "Mail has already been set. Do you want to change it ?(y/n) : ";
+	}
+	getline(std::cin, uChoice);
+
+	// If no
+	if (toLower(uChoice).compare("y") != 0) {
+		return false;
+	}
+																
 	// Asking for mail id to send alert notifications
-	std::cout << "Enter mail-id to send alert notifications to : " << std::endl;
+	std::cout << "Enter mail-id to send alert notifications to : ";
 	std::getline(cin, mailId);
 
 	// Generating otp of length 6
@@ -376,7 +393,7 @@ bool setEmail() {
 	}
 	else {
 		// Asking for otp
-		std::cout << "OTP has been sent to the given mail-id. Enter it to verify it's you : " << std::endl;
+		std::cout << "OTP has been sent to the given mail-id. Enter it to verify it's you : ";
 	}
 
 	// Checking OTP
@@ -387,5 +404,12 @@ bool setEmail() {
 	}
 
 	std::cout << "Email verification complete !" << std::endl;
+	
+	// Storing email to file
+	outFile.open(mailIdLoc);
+	outFile << mailId << std::endl;
+	outFile.clear();
+	outFile.close();
+	
 	return true;
 }
