@@ -1,6 +1,7 @@
 // This file contains various helper methods
 #include <iostream>
 #include <string>
+#include <ctime>
 
 // Method to convert a string to lowercase
 std::string toLower(std::string inpStr) {
@@ -31,4 +32,26 @@ std::string subStr(std::string line, char reqChar, int firstOccur, int secondOcc
 		}
 	}
 	return outStr;
+}
+
+// Method to generate a random alphanumeric string of length l
+std::string randomString(int lenString) {
+	std::srand(time(NULL));
+	std::string randString = "";										// To store the random string
+	int numSet[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };					// To store all numbers
+	// To store all chars
+	char alpSet[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	for (int i = 0; i < lenString; i++) {
+		int a = rand() % 2;
+		int b = rand() % 10;
+		int c = rand() % 26;
+		if (a == 0) {
+			randString += numSet[b];
+		}
+		else {
+			randString += alpSet[c];
+		}
+	}
+
+	return randString;
 }

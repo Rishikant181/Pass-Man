@@ -38,8 +38,3 @@ bool checkAuth() {
 	std::cout << "*WARNING* No authorization key has been set up. Your passwords are vulnerable !" << std::endl;
 	return true;
 }
-
-// Method to alert user by mailing him in case of failure of authentication
-bool alertMail() {
-
-}

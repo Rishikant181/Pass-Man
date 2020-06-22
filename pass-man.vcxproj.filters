@@ -50,5 +50,8 @@
     <ClInclude Include="SecMethods.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mailman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

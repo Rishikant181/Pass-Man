@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="Helper.h" />
+    <ClInclude Include="Mailman.h" />
     <ClInclude Include="MangMethods.h" />
     <ClInclude Include="PassMan.h" />
     <ClInclude Include="SecMethods.h" />

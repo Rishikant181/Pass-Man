@@ -6,6 +6,7 @@
 #include "Crypto.h"
 #include "Helper.h"
 #include "PassMan.h"
+#include "Mailman.h"
 
 // Method to get non-optional input
 std::string getReqInput() {
@@ -22,20 +23,6 @@ std::string getReqInput() {
 			std::cout << "Please enter a valid input !" << std::endl;
 		}
 	}
-}
-
-// Method to get mail-id to send notifications
-bool getMailId() {
-	std::string mailId;											// To store mail-id entered by user
-	
-	// Asking for mail id to send alert notifications
-	std::cout << "Enter mail-id to send alert notifications to : " << std::endl;
-	std::getline(cin, mailId);
-
-	// Generating and sending otp
-
-	// Asking for otp
-	std::cout << "OTP has been sent to the given mail-id. Enter it to verify it's you : " << std::endl;
 }
 
 // Method to change previous auth key
@@ -75,8 +62,6 @@ bool changeAuthKey() {
 		std::cout << "Confirmation failed !" << std::endl;
 		return false;
 	}
-
-	getMailId();
 
 	// Storing new auth key
 	outFile.open(auFileName);
@@ -365,4 +350,42 @@ bool authKey() {
 			return false;
 		}
 	}
+}
+
+// Method to get mail-id to send notifications
+bool setEmail() {
+	bool isMailSent;											// To check if mail is sent
+	std::string mailId;											// To store mail-id entered by user
+	std::string oneTimePass;									// To store one time password
+	std::string inputOtp;										// To store otp entered by user
+
+	// Asking for mail id to send alert notifications
+	std::cout << "Enter mail-id to send alert notifications to : " << std::endl;
+	std::getline(cin, mailId);
+
+	// Generating otp of length 6
+	oneTimePass = randomString(6);
+
+	// Sending otp
+	isMailSent = sendMail(mailId, "OTP for email id verification of pass-man", "Your OTP to verify your mail-id is : " + oneTimePass);
+
+	// Checking status
+	if (isMailSent == false) {
+		std::cout << "Please enter a valid e-mail id !" << std::endl;
+		return false;
+	}
+	else {
+		// Asking for otp
+		std::cout << "OTP has been sent to the given mail-id. Enter it to verify it's you : " << std::endl;
+	}
+
+	// Checking OTP
+	getline(cin, inputOtp);
+	if (inputOtp.compare(oneTimePass) != 0) {
+		std::cout << "Wrong OTP! Email verification failed !" << std::endl;
+		return false;
+	}
+
+	std::cout << "Email verification complete !" << std::endl;
+	return true;
 }
