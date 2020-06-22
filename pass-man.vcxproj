@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Crypto.cpp" />
     <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Mailman.cpp" />
     <ClCompile Include="MangMethods.cpp" />
     <ClCompile Include="PassMan.cpp" />
     <ClCompile Include="SecMethods.cpp" />

@@ -18,6 +18,7 @@ std::string workDir;                                    // To store location of 
 std::string enFileName = "Key\\EncryptionKey.key";      // To store encryption key file name
 std::string auFileName = "Key\\AuthPass.key";           // To store authorization password
 std::string dataLocation = "Data\\";                    // To store location of data
+std::string mailIdLoc = "Sec\\";                        // To store mail id of user
 
 // Files to handle reading-writing of database
 std::ifstream inpFile;                                  // File to handle reading from file
@@ -47,6 +48,7 @@ void firstInit() {
         // Creating directory to store data
         std::filesystem::create_directory(workDir + "Key");
         std::filesystem::create_directory(workDir + "Data");
+        std::filesystem::create_directory(workDir + "Sec");
 
         // Generating new encryption key
         enKey();
@@ -78,6 +80,7 @@ int main(int nArgs, char *allArgs[]) {
     enFileName = workDir + enFileName;
     auFileName = workDir + auFileName;
     dataLocation = workDir + dataLocation;
+    mailIdLoc = workDir + mailIdLoc;
     
     // Variable declaraion and initialisation
     firstInit();

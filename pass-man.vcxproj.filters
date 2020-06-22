@@ -30,6 +30,9 @@
     <ClCompile Include="SecMethods.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mailman.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Crypto.h">

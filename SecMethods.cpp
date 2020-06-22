@@ -6,6 +6,9 @@
 #include "PassMan.h"
 #include "Crypto.h"
 
+// Using cli .net library
+using namespace System::Net;
+
 // Method to check authorization
 bool checkAuth() {
 	std::string inpAuthPass;										// To store input auth pass
@@ -34,4 +37,9 @@ bool checkAuth() {
 	// Default case when no authorization has been set up
 	std::cout << "*WARNING* No authorization key has been set up. Your passwords are vulnerable !" << std::endl;
 	return true;
+}
+
+// Method to alert user by mailing him in case of failure of authentication
+bool alertMail() {
+
 }

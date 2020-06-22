@@ -24,10 +24,25 @@ std::string getReqInput() {
 	}
 }
 
+// Method to get mail-id to send notifications
+bool getMailId() {
+	std::string mailId;											// To store mail-id entered by user
+	
+	// Asking for mail id to send alert notifications
+	std::cout << "Enter mail-id to send alert notifications to : " << std::endl;
+	std::getline(cin, mailId);
+
+	// Generating and sending otp
+
+	// Asking for otp
+	std::cout << "OTP has been sent to the given mail-id. Enter it to verify it's you : " << std::endl;
+}
+
 // Method to change previous auth key
 bool changeAuthKey() {
 	std::string newAuthKey;										// To store new auth key
 	std::string conAuthKey;										// To store auth key confirmation
+	std::string mailId;											// To store input mail id
 
 	std::cout << "Enter new authorization key : ";
 
@@ -60,6 +75,8 @@ bool changeAuthKey() {
 		std::cout << "Confirmation failed !" << std::endl;
 		return false;
 	}
+
+	getMailId();
 
 	// Storing new auth key
 	outFile.open(auFileName);
