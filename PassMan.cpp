@@ -90,29 +90,16 @@ void firstTime(passMan &ob) {
         // Generating new encryption key
         enKey(ob);
 
-        // Getting encryption key
-        inpFile.open(ob.getStringMemberData("enfile"));
-        ob.getKey();
-        // Closing file
-        inpFile.clear();
-        inpFile.close();
-
         std::cout << "Successfully generated Encryption Key !" << std::endl;
 
-        // Checking status of authorization key
-        bool hasAuthKey = authKey(ob);
-        if (hasAuthKey == true) {
-            std::cout << "Successfully set up authorization key !" << std::endl;
-        }
+        
     }
-    else {
-        // Getting encryption key
-        inpFile.open(ob.getStringMemberData("enfile"));
-        ob.getKey();
-        // Closing file
-        inpFile.clear();
-        inpFile.close();
-    }
+    // Getting encryption key
+    inpFile.open(ob.getStringMemberData("enfile"));
+    ob.getKey();
+    // Closing file
+    inpFile.clear();
+    inpFile.close();
 }
 
 int main(int nArgs, char *allArgs[]) {
@@ -133,8 +120,6 @@ int main(int nArgs, char *allArgs[]) {
     bool authStatus = checkAuth(ob);                       // To store authorization status
     // If authorization fails
     if (authStatus == false) {
-        std::cout << "Failed to authorize. Suspending further operations" << std::endl;
-
         // Alerting user if mail-id set up
         if (std::filesystem::exists(ob.getStringMemberData("mailid")) == true) {
             std::string mailId;                          // To store mail-id from file
@@ -159,6 +144,9 @@ int main(int nArgs, char *allArgs[]) {
             // Sending mail
             sendMail(mailId, "Unsuccessful access attempt of pass-man", "Someone tried to access your pass-man passwords at time : " + timeString);
         }
+
+        std::cout << "Failed to authorize. Suspending further operations" << std::endl;
+
         return 0;
     }
 
@@ -294,10 +282,10 @@ int main(int nArgs, char *allArgs[]) {
 
         // Checking status
         if (isMailIdChanged == true) {
-            std::cout << "Mail id changed succesfully !" << std::endl;
+            std::cout << "Mail-id changed succesfully !" << std::endl;
         }
         else {
-            std::cout << "Maild id change failed" << std::endl;
+            std::cout << "Mail-id change failed" << std::endl;
         }
         
         return 0;
@@ -350,8 +338,13 @@ int main(int nArgs, char *allArgs[]) {
         std::cout << "7. restore : " << std::endl;
         std::cout << "       Description : This command is used passwords from a specified backup" << std::endl;
         std::cout << "       Usage       : pass-man backup <path to backup>\n" << std::endl;
+        // Help for mail
+        std::cout << "8. mail    : " << std::endl;
+        std::cout << "       Description : This command is used to set up/change mail-id of user to send alerts" << std::endl;
+        std::cout << "       Usage       : pass-man mail\n" << std::endl;
+        std::cout << "                     To remove authentication mail, change it to blank\n" << std::endl;
         // Help for add
-        std::cout << "8. auth    : " << std::endl;
+        std::cout << "9. auth    : " << std::endl;
         std::cout << "       Description : This command is used to set up/change authorization key" << std::endl;
         std::cout << "       Usage       : pass-man auth\n" << std::endl;
         std::cout << "                     To remove authentication key, change key to blank\n" << std::endl;

@@ -334,6 +334,20 @@ bool setEmail(passMan &ob) {
 	std::cout << "Enter mail-id to send alert notifications to : ";
 	std::getline(cin, mailId);
 
+	// To remove mail-id
+	if (mailId.compare("") == 0) {
+		// If set up earlier
+		if (std::filesystem::exists(ob.getStringMemberData("mailid")) == true) {
+			// Removing mail-id
+			std::filesystem::remove(ob.getStringMemberData("mailid"));
+			std::cout << "Removed mail-id successfully !" << std::endl;
+		}
+		else {
+			std::cout << "Mail-id not set up, hence not removed" << std::endl;
+		}
+		return false;
+	}
+
 	// Generating otp of length 6
 	oneTimePass = randomString(6);
 
