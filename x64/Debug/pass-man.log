@@ -1,9 +1,4 @@
-﻿  Crypto.cpp
-D:\Developement\C++\pass-man\Crypto.cpp(12,17): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-D:\Developement\C++\pass-man\Crypto.cpp(32,31): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\Developement\C++\pass-man\Crypto.cpp(50,32): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  PassMan.cpp
-  Generating Code...
+﻿  PassMan.cpp
 D:\Developement\C++\pass-man\PassMan.cpp(62): warning C4715: 'passMan::getIntMemberData': not all control paths return a value
 D:\Developement\C++\pass-man\PassMan.cpp(82): warning C4715: 'passMan::getStringMemberData': not all control paths return a value
   Crypto.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL

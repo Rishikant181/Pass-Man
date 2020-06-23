@@ -38,7 +38,7 @@ std::string inpEncrypt(passMan &ob, std::string inpStr) {
 		// Encrypting the ascii value of char
 		int eIChar = iChar * ob.getIntMemberData("enmul") + ob.getIntMemberData("enadd");
 		// Storing encrypted pass
-		enPass += (std::to_string(eIChar) + "-");
+		enPass = enPass + (std::to_string(eIChar) + "-");
 	}
 	return enPass;
 }

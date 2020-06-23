@@ -90,6 +90,13 @@ void firstTime(passMan &ob) {
         // Generating new encryption key
         enKey(ob);
 
+        // Getting encryption key
+        inpFile.open(ob.getStringMemberData("enfile"));
+        ob.getKey();
+        // Closing file
+        inpFile.clear();
+        inpFile.close();
+
         std::cout << "Successfully generated Encryption Key !" << std::endl;
 
         // Checking status of authorization key
@@ -98,13 +105,14 @@ void firstTime(passMan &ob) {
             std::cout << "Successfully set up authorization key !" << std::endl;
         }
     }
-
-    // Getting encryption key
-    inpFile.open(ob.getStringMemberData("enfile"));
-    ob.getKey();
-    // Closing file
-    inpFile.clear();
-    inpFile.close();
+    else {
+        // Getting encryption key
+        inpFile.open(ob.getStringMemberData("enfile"));
+        ob.getKey();
+        // Closing file
+        inpFile.clear();
+        inpFile.close();
+    }
 }
 
 int main(int nArgs, char *allArgs[]) {
