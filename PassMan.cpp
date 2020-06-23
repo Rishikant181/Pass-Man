@@ -16,9 +16,9 @@ int enKeyAdd = 0;                                       // To store necryption k
 // Vars to store files names and locations
 std::string workDir;                                    // To store location of working directory
 std::string enFileName = "Key\\EncryptionKey.key";      // To store encryption key file name
-std::string auFileName = "Key\\AuthPass.key";           // To store authorization password
+std::string auFileName = "Security\\AuthPass.key";      // To store authorization password
 std::string dataLocation = "Data\\";                    // To store location of data
-std::string mailIdLoc = "Sec\\MailId.id";                        // To store mail id of user
+std::string mailIdLoc = "Security\\MailId.id";                        // To store mail id of user
 
 // Files to handle reading-writing of database
 std::ifstream inpFile;                                  // File to handle reading from file
@@ -45,15 +45,10 @@ void firstInit() {
     if (std::filesystem::exists(enFileName) == false) {
         std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
 
-        // Creating directory to store data
-        std::filesystem::create_directory(workDir + "Key");
-        std::filesystem::create_directory(workDir + "Data");
-        std::filesystem::create_directory(workDir + "Sec");
-
         // Generating new encryption key
         enKey();
 
-        std::cout << "Successfully generated Database file and Encryption Key !" << std::endl;
+        std::cout << "Successfully generated Encryption Key !" << std::endl;
 
         // Checking status of authorization key
         bool hasAuthKey = authKey();
@@ -61,6 +56,7 @@ void firstInit() {
             std::cout << "Successfully set up authorization key !" << std::endl;
         }
     }
+
     // Getting encryption key
     inpFile.open(enFileName);
     getKey();
@@ -70,12 +66,12 @@ void firstInit() {
 }
 
 int main(int nArgs, char *allArgs[]) {
-    // Initialising working directory
-    
+    // Initialising working directory    
     // Storing location temporarily
     std::string loc = allArgs[0];
     // Storing actual location
     workDir = loc.substr(0, loc.find_last_of('\\') + 1);
+    
     // Changing file names
     enFileName = workDir + enFileName;
     auFileName = workDir + auFileName;

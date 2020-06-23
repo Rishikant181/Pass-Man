@@ -50,10 +50,10 @@ std::string inpDecrypt(std::string inpStr) {
 	int inpLen = inpStr.length()		;					// To store length of input string
 	for (int i = 0 ; i < inpLen; i++) {
 		if (inpStr[i] != '-') {
-			enChar += inpStr[i];
+			enChar = enChar + inpStr[i];
 		}
 		else {
-			actPass += (char)((std::stoi(enChar) - enKeyAdd) / enKeyMul);
+			actPass = actPass + (char)((std::stoi(enChar) - enKeyAdd) / enKeyMul);
 			enChar = "";
 		}
 	}

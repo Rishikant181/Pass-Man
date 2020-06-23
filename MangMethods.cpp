@@ -7,6 +7,7 @@
 #include "Helper.h"
 #include "PassMan.h"
 #include "Mailman.h"
+#include "SecMethods.h"
 
 // Method to get non-optional input
 std::string getReqInput() {
@@ -23,53 +24,6 @@ std::string getReqInput() {
 			std::cout << "Please enter a valid input !" << std::endl;
 		}
 	}
-}
-
-// Method to change previous auth key
-bool changeAuthKey() {
-	std::string newAuthKey;										// To store new auth key
-	std::string conAuthKey;										// To store auth key confirmation
-	std::string mailId;											// To store input mail id
-
-	std::cout << "Enter new authorization key : ";
-
-	// Taking new auth key
-	std::getline(std::cin, newAuthKey);
-
-	// If user wants to remove auth key
-	if (newAuthKey.compare("") == 0) {
-		std::string conChoice;
-		// Asking confirmation
-		std::cout << "Are you sure you want to remove authentication ?(y/n) : ";
-		std::getline(std::cin, conChoice);
-		// If yes
-		if (toLower(conChoice).compare("y") == 0) {
-			std::filesystem::remove(auFileName);
-			return true;
-		}
-		// If no
-		else {
-			return false;
-		}
-	}
-
-	// Confirming auth key
-	std::cout << "Confirm authorization key   : ";
-	std::getline(std::cin, conAuthKey);
-
-	// Checking confirmation
-	if (conAuthKey.compare(newAuthKey) != 0) {
-		std::cout << "Confirmation failed !" << std::endl;
-		return false;
-	}
-
-	// Storing new auth key
-	outFile.open(auFileName);
-	outFile << inpEncrypt(newAuthKey) << "\n";
-	outFile.clear();
-	outFile.close();
-
-	return true;
 }
 
 // Method to add a new password to the database
@@ -363,11 +317,11 @@ bool setEmail() {
 	// Checking if mail already set up
 	// If does not exist
 	if (std::filesystem::exists(mailIdLoc) == false) {
-		std::cout << "Mail has not been set up. Do you want to set it now ?(y/n) : ";
+		std::cout << "Mail-id has not been set up. Do you want to set it now ?(y/n) : ";
 	}
 	// If exists
 	else {
-		std::cout << "Mail has already been set. Do you want to change it ?(y/n) : ";
+		std::cout << "Mail-id has already been set. Do you want to change it ?(y/n) : ";
 	}
 	getline(std::cin, uChoice);
 
@@ -403,11 +357,11 @@ bool setEmail() {
 		return false;
 	}
 
-	std::cout << "Email verification complete !" << std::endl;
+	std::cout << "Email-id verification complete !" << std::endl;
 	
 	// Storing email to file
 	outFile.open(mailIdLoc);
-	outFile << mailId << std::endl;
+	outFile << inpEncrypt(mailId) << std::endl;
 	outFile.clear();
 	outFile.close();
 	

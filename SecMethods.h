@@ -1,1 +1,2 @@
 bool checkAuth();
+bool changeAuthKey();
