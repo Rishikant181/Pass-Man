@@ -1,7 +1,9 @@
+#pragma once
 #include <string>
+#include "PassMan.h"
 
 using namespace std;
 
-string inpEncrypt(string name);
-string inpDecrypt(string inpStr);
-void enKey();
+string inpEncrypt(passMan &ob, string name);
+string inpDecrypt(passMan &ob, string inpStr);
+void enKey(passMan &ob);

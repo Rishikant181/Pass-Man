@@ -5,6 +5,7 @@
 #include <fstream>
 #include <filesystem>
 #include <ctime>
+#include "PassMan.h"
 #include "Crypto.h"
 #include "Helper.h"
 #include "MangMethods.h"
@@ -12,16 +13,6 @@
 #include "Mailman.h"
 
 // Global vars
-int enKeyMul = 0;                                       // To store necryption key multiplicative part
-int enKeyAdd = 0;                                       // To store necryption key additive part
-
-// Vars to store files names and locations
-std::string workDir;                                    // To store location of working directory
-std::string enFileName = "Key\\EncryptionKey.key";      // To store encryption key file name
-std::string auFileName = "Security\\AuthPass.key";      // To store authorization password
-std::string dataLocation = "Data\\";                    // To store location of data
-std::string mailIdLoc = "Security\\MailId.id";                        // To store mail id of user
-
 // Files to handle reading-writing of database
 std::ifstream inpFile;                                  // File to handle reading from file
 std::ofstream outFile;                                  // File to handle writing to file
@@ -29,39 +20,88 @@ std::ofstream outFile;                                  // File to handle writin
 // Other vars
 std::string authPass;                                   // To store authorization password
 
-// Method to load encryption key
-void getKey() {
+// Implementing class passMan
+// Defining constructor
+passMan::passMan(std::string workDir) {
+    // Initialising member data
+    // Initialising enKeys
+    enKeyMul = 0;
+    enKeyAdd = 0;
+    
+    // Initialising working folder
+    enFileName = workDir + "Key\\EncryptionKey.key";
+    auFileName = workDir + "Security\\AuthPass.key";
+    dataLocation = workDir + "Data\\";
+    mailIdLoc = workDir + "Security\\MailId.id";
+}
+
+// Defining getKey method
+void passMan::getKey() {
     // Setting encryption key from file
     std::string line;                                   // To store each line from EncryptKey.key file
-    
+
     // Getting mul val
     std::getline(inpFile, line);
     enKeyMul = std::stoi(line);
-    
+
     // Getting add val
     std::getline(inpFile, line);
     enKeyAdd = std::stoi(line);
 }
 
-void firstInit() {
-    if (std::filesystem::exists(enFileName) == false) {
+// Defining getIntMemberData method
+int passMan::getIntMemberData(std::string datName) {
+    //For dataLocation
+    if (datName.compare("enmul") == 0) {
+        return enKeyMul;
+    }
+    // For enFileName
+    else if (datName.compare("enadd") == 0) {
+        return enKeyAdd;
+    }
+}
+
+// Defining getStringMemberData method
+std::string passMan::getStringMemberData(std::string datName) {
+    //For dataLocation
+    if (datName.compare("data") == 0) {
+        return dataLocation;
+    }
+    // For enFileName
+    else if (datName.compare("enfile") == 0) {
+        return enFileName;
+    }
+    // For auFileName
+    else if (datName.compare("aufile") == 0) {
+        return auFileName;
+    }
+    // For mailIdLoc
+    else if (datName.compare("mailid") == 0) {
+        return mailIdLoc;
+    }
+}
+
+// Method to set up pass-man for 1st time use
+void firstTime(passMan &ob) {
+    // Setting up pass-man for 1st time
+    if (std::filesystem::exists(ob.getStringMemberData("enfile")) == false) {
         std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
 
         // Generating new encryption key
-        enKey();
+        enKey(ob);
 
         std::cout << "Successfully generated Encryption Key !" << std::endl;
 
         // Checking status of authorization key
-        bool hasAuthKey = authKey();
+        bool hasAuthKey = authKey(ob);
         if (hasAuthKey == true) {
             std::cout << "Successfully set up authorization key !" << std::endl;
         }
     }
 
     // Getting encryption key
-    inpFile.open(enFileName);
-    getKey();
+    inpFile.open(ob.getStringMemberData("enfile"));
+    ob.getKey();
     // Closing file
     inpFile.clear();
     inpFile.close();
@@ -71,41 +111,37 @@ int main(int nArgs, char *allArgs[]) {
     // Initialising working directory    
     // Storing location temporarily
     std::string loc = allArgs[0];
-    // Storing actual location
-    workDir = loc.substr(0, loc.find_last_of('\\') + 1);
     
-    // Changing file names
-    enFileName = workDir + enFileName;
-    auFileName = workDir + auFileName;
-    dataLocation = workDir + dataLocation;
-    mailIdLoc = workDir + mailIdLoc;
+    // Initialising passMan object
+    passMan ob(loc.substr(0, loc.find_last_of('\\') + 1));
+
+    // Check and set up pass-man for 1st time use
+    firstTime(ob);
     
-    // Variable declaraion and initialisation
-    firstInit();
     std::string oprArg = toLower(allArgs[1]);            // To store operation argument
     std::string refName;                                 // To store reference name
         
     // Checking authorization
-    bool authStatus = checkAuth();                       // To store authorization status
+    bool authStatus = checkAuth(ob);                       // To store authorization status
     // If authorization fails
     if (authStatus == false) {
         std::cout << "Failed to authorize. Suspending further operations" << std::endl;
 
         // Alerting user if mail-id set up
-        if (std::filesystem::exists(mailIdLoc) == true) {
+        if (std::filesystem::exists(ob.getStringMemberData("mailid")) == true) {
             std::string mailId;                          // To store mail-id from file
             std::string timeString;                      // To store time as string
             time_t now = time(NULL);                     // To store time_t
             char nowTime[26];                            // To store current time
 
             // Getting mail-id from file
-            inpFile.open(mailIdLoc);
+            inpFile.open(ob.getStringMemberData("mailid"));
             std::getline(inpFile, mailId);
             inpFile.clear();
             inpFile.close();
 
             // Decrypting mail-id
-            mailId = inpDecrypt(mailId);
+            mailId = inpDecrypt(ob, mailId);
 
             // Getting current time
             ctime_s(nowTime, 26, &now);
@@ -128,7 +164,7 @@ int main(int nArgs, char *allArgs[]) {
         refName = toLower(allArgs[2]);
         
         // Calling addPass method of MangMethods file to add a new password
-        isAdded = addPass(refName);
+        isAdded = addPass(ob, refName);
         
         // Checking status
         if (isAdded == true) {
@@ -150,7 +186,7 @@ int main(int nArgs, char *allArgs[]) {
         std::string refName = toLower(allArgs[2]);           // To store refName
         
         // Calling method to get pass
-        isPresent = getPass(refName);
+        isPresent = getPass(ob, refName);
 
         // Checking status
         if (isPresent == false) {
@@ -162,7 +198,7 @@ int main(int nArgs, char *allArgs[]) {
     }
     // For getting stored passwords refName list with comments
     else if (oprArg.compare("list") == 0) {
-        getList();
+        getList(ob);
         return 0;
     }
     // For editing a stored password
@@ -173,7 +209,7 @@ int main(int nArgs, char *allArgs[]) {
         refName = toLower(allArgs[2]);
         
         // Editing and storing status
-        isEdited = editPass(refName);
+        isEdited = editPass(ob, refName);
 
         // Checking if changes made
         if (isEdited == true) {
@@ -192,7 +228,7 @@ int main(int nArgs, char *allArgs[]) {
         refName = toLower(allArgs[2]);
 
         // Deleting
-        isDeleted = delPass(refName);
+        isDeleted = delPass(ob, refName);
 
         // Checking status
         if (isDeleted == true) {
@@ -212,7 +248,7 @@ int main(int nArgs, char *allArgs[]) {
         backLoc = allArgs[2];
 
         // Backing up passwords
-        isBacked = backPass(backLoc);
+        isBacked = backPass(ob, backLoc);
 
         // Checking status
         if (isBacked == true) {
@@ -232,7 +268,7 @@ int main(int nArgs, char *allArgs[]) {
         backLoc = allArgs[2];
 
         // Restoring from backup
-        isRestored = restorePass(backLoc);
+        isRestored = restorePass(ob, backLoc);
         
         // Checking status
         if (isRestored == true) {
@@ -246,7 +282,7 @@ int main(int nArgs, char *allArgs[]) {
     // For changing/adding mail id
     else if (oprArg.compare("mail") == 0) {
         // Getting status
-        bool isMailIdChanged = setEmail();
+        bool isMailIdChanged = setEmail(ob);
 
         // Checking status
         if (isMailIdChanged == true) {
@@ -260,7 +296,7 @@ int main(int nArgs, char *allArgs[]) {
     }
     // For changing/setting up authorization key
     else if (oprArg.compare("auth") == 0) {
-        bool isAuthDone = authKey();
+        bool isAuthDone = authKey(ob);
         // Checking status
         if (isAuthDone == true) {
             std::cout << "Authorization key changed successfully" << std::endl;

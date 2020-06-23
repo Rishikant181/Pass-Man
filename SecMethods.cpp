@@ -11,7 +11,7 @@
 using namespace System::Net;
 
 // Method to change previous auth key
-bool changeAuthKey() {
+bool changeAuthKey(passMan &ob) {
 	std::string newAuthKey;										// To store new auth key
 	std::string conAuthKey;										// To store auth key confirmation
 	std::string mailId;											// To store input mail id
@@ -29,7 +29,7 @@ bool changeAuthKey() {
 		std::getline(std::cin, conChoice);
 		// If yes
 		if (toLower(conChoice).compare("y") == 0) {
-			std::filesystem::remove(auFileName);
+			std::filesystem::remove(ob.getStringMemberData("aufile"));
 			return true;
 		}
 		// If no
@@ -49,8 +49,8 @@ bool changeAuthKey() {
 	}
 
 	// Storing new auth key
-	outFile.open(auFileName);
-	outFile << inpEncrypt(newAuthKey) << "\n";
+	outFile.open(ob.getStringMemberData("aufile"));
+	outFile << inpEncrypt(ob, newAuthKey) << "\n";
 	outFile.clear();
 	outFile.close();
 
@@ -58,24 +58,24 @@ bool changeAuthKey() {
 }
 
 // Method to check authorization
-bool checkAuth() {
+bool checkAuth(passMan &ob) {
 	std::string inpAuthPass;										// To store input auth pass
 	std::string actAuthPass;										// To store actual auth pass
 	// Checking if authorization key set up
-	if (std::filesystem::exists(auFileName) == true) {
+	if (std::filesystem::exists(ob.getStringMemberData("aufile")) == true) {
 		// Taking input
 		std::cout << "Enter authorization password : ";
 		std::getline(std::cin, inpAuthPass);
 
 		// Getting actual auth pass
-		inpFile.open(auFileName);
+		inpFile.open(ob.getStringMemberData("aufile"));
 		std::getline(inpFile, actAuthPass);
 		inpFile.clear();
 		inpFile.close();
 
 		// Checking for correct auth
 		// For successful authorization
-		if (inpAuthPass.compare(inpDecrypt(actAuthPass)) == 0) {
+		if (inpAuthPass.compare(inpDecrypt(ob, actAuthPass)) == 0) {
 			return true;
 		}
 		else {
