@@ -28,6 +28,5 @@ bool sendMail(std::string toAddress, std::string mailHeading, std::string mailBo
 	catch (std::exception e) {
 		std::cout << "Failed to send mail" << std::endl;
 		return false;
-	}
-	
+	}	
 }

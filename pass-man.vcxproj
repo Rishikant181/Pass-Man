@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="Crypto.cpp" />
     <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Mailman.cpp" />
     <ClCompile Include="MangMethods.cpp" />
     <ClCompile Include="PassMan.cpp" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="Helper.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="Mailman.h" />
     <ClInclude Include="MangMethods.h" />
     <ClInclude Include="PassMan.h" />

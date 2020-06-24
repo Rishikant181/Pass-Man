@@ -7,12 +7,14 @@ extern std::ifstream inpFile;
 extern std::ofstream outFile;
 
 // Declaring class passMan
-class passMan {
+class passMan {	
+private:
 	// Member data declaration
 	// Vars to store encryption key
-private:
 	int enKeyMul;
 	int enKeyAdd;
+	// Other vars
+	std::string workDir;											// To store working directory
 
 	// Vars to store directory locations
 	std::string dataLocation;										// To store location of stored data
@@ -23,7 +25,7 @@ private:
 public:
 	// Member method declaration
 	// Constructor
-	passMan(std::string workDir);
+	passMan(std::string dir);
 
 	// Method to get encryption key
 	void getKey();

@@ -11,6 +11,7 @@
 #include "MangMethods.h"
 #include "SecMethods.h"
 #include "Mailman.h"
+#include "Logger.h"
 
 // Global vars
 // Files to handle reading-writing of database
@@ -22,13 +23,14 @@ std::string authPass;                                   // To store authorizatio
 
 // Implementing class passMan
 // Defining constructor
-passMan::passMan(std::string workDir) {
+passMan::passMan(std::string dir) {
     // Initialising member data
     // Initialising enKeys
     enKeyMul = 0;
     enKeyAdd = 0;
     
     // Initialising working folder
+    workDir = dir;
     enFileName = workDir + "Key\\EncryptionKey.key";
     auFileName = workDir + "Security\\AuthPass.key";
     dataLocation = workDir + "Data\\";
@@ -63,6 +65,10 @@ int passMan::getIntMemberData(std::string datName) {
 
 // Defining getStringMemberData method
 std::string passMan::getStringMemberData(std::string datName) {
+    //For workDir
+    if (datName.compare("workdir") == 0) {
+        return workDir;
+    }
     //For dataLocation
     if (datName.compare("data") == 0) {
         return dataLocation;
@@ -107,8 +113,11 @@ int main(int nArgs, char *allArgs[]) {
     // Storing location temporarily
     std::string loc = allArgs[0];
     
-    // Initialising passMan object
+    // Initialising objects
+    // passMan onject
     passMan ob(loc.substr(0, loc.find_last_of('\\') + 1));
+    // logMan object
+    logMan lM(ob);
 
     // Check and set up pass-man for 1st time use
     firstTime(ob);
