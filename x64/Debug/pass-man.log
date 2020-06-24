@@ -1,8 +1,4 @@
 ﻿  Logger.cpp
-  PassMan.cpp
-  Generating Code...
-D:\Developement\C++\pass-man\PassMan.cpp(64): warning C4715: 'passMan::getIntMemberData': not all control paths return a value
-D:\Developement\C++\pass-man\PassMan.cpp(88): warning C4715: 'passMan::getStringMemberData': not all control paths return a value
   Crypto.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
   Crypto.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   pass-man.vcxproj -> D:\Developement\C++\pass-man\x64\Debug\pass-man.exe

@@ -10,6 +10,7 @@ class logMan {
 private:
 	// Private member data
 	std::string workDir;											// To store working directory
+	std::string logDir;												// To store log directory name
 	std::ifstream inpLogFile;										// To store input file
 	std::ofstream outLogFile;										// To store output file
 	// Private member method

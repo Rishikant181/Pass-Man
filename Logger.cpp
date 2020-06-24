@@ -17,6 +17,9 @@ bool logMan::dateExists(std::string date) {
 
 // Defining constructor
 logMan::logMan(passMan &ob) {
+	// Initialising vars
+	// Private member data
+	logDir = "Logs\\";
 	workDir = ob.getStringMemberData("workdir");
 }
 
@@ -43,8 +46,8 @@ void logMan::logData(std::string msg) {
 	// Checking if log of given date exists
 	isDateLogged = dateExists(nowDate);
 
-	outLogFile.open(workDir + "Logs\\" + nowDate + ".log", std::ios_base::app);
-	outLogFile << nowTime + " " + msg << std::endl;
+	outLogFile.open(workDir + logDir + nowDate + ".log", std::ios_base::app);
+	outLogFile << nowTime + "	->	" + msg << std::endl;
 	outLogFile.clear();
 	outLogFile.close();
 }
