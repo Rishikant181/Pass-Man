@@ -18,7 +18,11 @@
 #include "SecMethods.h"
 
 // Objects of various classes used in the program
-extern passMan* pm;														// To store passMan object
+extern passMan* pm;															// To store passMan object
 extern logMan* lm;															// To store logMan object
 extern cryptMan* cm;														// To store cryptMan object
 extern secMan* sm;															// To store secMan object
+
+// Other vars
+extern std::ifstream inpFile;												// To handle file input
+extern std::ofstream outFile;												// To handle file output

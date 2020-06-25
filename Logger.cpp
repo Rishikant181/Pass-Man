@@ -3,7 +3,6 @@
 #include "GlobalMembers.h"
 
 // Defining Logger class
-
 // Defining constructor
 logMan::logMan(std::string workDir) {
 	// Initialising vars
@@ -11,13 +10,13 @@ logMan::logMan(std::string workDir) {
 	logDir = workDir;
 }
 
-// Defining logData method
+// Defining method logData
 void logMan::logData(std::string msg) {
 	// Declaring vars
-	char nowDateTime[26];											// To store date-time as char array
-	std::string nowDateTimeString;									// To store date-time as string
-	std::string nowDate;											// To store date as string
-	std::string nowTime;											// To store time as string
+	char nowDateTime[26];												// To store date-time as char array
+	std::string nowDateTimeString;										// To store date-time as string
+	std::string nowDate;												// To store date as string
+	std::string nowTime;												// To store time as string
 
 	// Getting today's date and time
 	time_t now = time(NULL);

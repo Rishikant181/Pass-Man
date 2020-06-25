@@ -1,5 +1,6 @@
 #pragma once
 
+// Declaring class cryptMan
 class cryptMan {
 private:
 	// Member data

@@ -61,11 +61,17 @@ bool getPass(std::string refName) {
 		// Exitting from program
 		return false;
 	}
+
+	// Getting data from database
 	inpFile.open(pm->getStringData("dataloc") + refName + ".pass");
 	std::getline(inpFile, enPass);
 	inpFile.clear();
 	inpFile.close();
+
+	// Getting encrypted password
 	enPass = enPass.substr(0, enPass.find(' '));
+	
+	// Decrypting password and displaying
 	std::cout << cm->inpDecrypt(enPass);
 	return true;
 }
@@ -272,8 +278,7 @@ bool authKey() {
 			std::filesystem::remove(pm->getStringData("aufile"));
 			
 			// Changing authorization key
-			sm->changeAuthKey();
-			
+			sm->changeAuthKey();			
 			return true;
 		}
 		else {
@@ -370,7 +375,6 @@ bool setEmail() {
 	outFile.open(pm->getStringData("mailloc"));
 	outFile << cm->inpEncrypt(mailId) << std::endl;
 	outFile.clear();
-	outFile.close();
-	
+	outFile.close();	
 	return true;
 }

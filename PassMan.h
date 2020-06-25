@@ -1,9 +1,5 @@
 #pragma once
 
-// Vars to handle file IO
-extern std::ifstream inpFile;
-extern std::ofstream outFile;
-
 // Declaring class passMan
 class passMan {	
 private:

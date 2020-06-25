@@ -58,8 +58,10 @@ std::string cryptMan::inpEncrypt(std::string inpStr) {
 	// Converting input string to encrypted format
 	for (int i = 0; i < lenPass; i++) {
 		int iChar = inpStr[i];						//To store each char ascii value
+		
 		// Encrypting the ascii value of char
 		int eIChar = iChar * enKeyMul + enKeyAdd;
+		
 		// Storing encrypted pass
 		enPass = enPass + (std::to_string(eIChar) + "-");
 	}

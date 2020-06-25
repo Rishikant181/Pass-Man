@@ -28,7 +28,7 @@ passMan::passMan(std::string dir) {
     mailIdLoc = workDir + "Security\\Mail-id.id";
 }
 
-// Defining getStringData method
+// Defining method getStringData
 std::string passMan::getStringData(std::string dName) {
     // If enKeyFile
     if (dName.compare("efile") == 0) {
@@ -52,6 +52,7 @@ std::string passMan::getStringData(std::string dName) {
     }
 }
 
+// Method to check if pass-man is started for 1st time
 void firstTime() {
     // Checking if pass-man started for 1st time
     if (std::filesystem::exists(pm->getStringData("efile")) == false) {
@@ -90,11 +91,13 @@ int main(int nArgs, char *allArgs[]) {
     // Loading encryption key
     cm->getKey();
 
+    // Getting arguments
     std::string oprArg = toLower(allArgs[1]);            // To store operation argument
     std::string refName;                                 // To store reference name
         
     // Checking authorization
     bool authStatus = sm->checkAuth();                       // To store authorization status
+    
     // If authorization fails
     if (authStatus == false) {
         bool isMailSent = sm->failAuthMail();
@@ -111,7 +114,6 @@ int main(int nArgs, char *allArgs[]) {
         }
 
         std::cout << "Failed to authorize. Suspending further operations" << std::endl;
-
         return 0;
     }
 
@@ -159,8 +161,7 @@ int main(int nArgs, char *allArgs[]) {
         else {
             // Logging
             lm->logData("Retrieved password with reference name : " + refName);
-        }
-        
+        }        
         // Exitting from program
         return 0;
     }
@@ -170,7 +171,6 @@ int main(int nArgs, char *allArgs[]) {
 
         // Logging
         lm->logData("Retrieved list of store passwords(Reference names only)");
-
         return 0;
     }
     // For editing a stored password

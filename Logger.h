@@ -3,7 +3,7 @@
 // Declaring class Logger
 class logMan {
 private:
-	// Private member data
+	// Member data
 	std::string logDir;												// To store log directory name
 
 public:
