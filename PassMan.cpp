@@ -1,17 +1,6 @@
 // pass-man.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <filesystem>
-#include <ctime>
-#include "PassMan.h"
-#include "Crypto.h"
-#include "Helper.h"
-#include "MangMethods.h"
-#include "SecMethods.h"
-#include "Mailman.h"
-#include "Logger.h"
+#include "MasterObjects.h"
 
 // Global vars
 // Files to handle reading-writing of database
@@ -25,126 +14,67 @@ std::string authPass;                                   // To store authorizatio
 // Defining constructor
 passMan::passMan(std::string dir) {
     // Initialising member data
-    // Initialising enKeys
-    enKeyMul = 0;
-    enKeyAdd = 0;
-    
     // Initialising working folder
     workDir = dir;
-    enFileName = workDir + "Key\\EncryptionKey.key";
-    auFileName = workDir + "Security\\AuthPass.key";
     dataLocation = workDir + "Data\\";
-    mailIdLoc = workDir + "Security\\MailId.id";
-}
-
-// Defining getKey method
-void passMan::getKey() {
-    // Setting encryption key from file
-    std::string line;                                   // To store each line from EncryptKey.key file
-
-    // Getting mul val
-    std::getline(inpFile, line);
-    enKeyMul = std::stoi(line);
-
-    // Getting add val
-    std::getline(inpFile, line);
-    enKeyAdd = std::stoi(line);
-}
-
-// Defining getIntMemberData method
-int passMan::getIntMemberData(std::string datName) {
-    //For dataLocation
-    if (datName.compare("enmul") == 0) {
-        return enKeyMul;
-    }
-    // For enFileName
-    else if (datName.compare("enadd") == 0) {
-        return enKeyAdd;
-    }
-}
-
-// Defining getStringMemberData method
-std::string passMan::getStringMemberData(std::string datName) {
-    //For workDir
-    if (datName.compare("workdir") == 0) {
-        return workDir;
-    }
-    //For dataLocation
-    if (datName.compare("data") == 0) {
-        return dataLocation;
-    }
-    // For enFileName
-    else if (datName.compare("enfile") == 0) {
-        return enFileName;
-    }
-    // For auFileName
-    else if (datName.compare("aufile") == 0) {
-        return auFileName;
-    }
-    // For mailIdLoc
-    else if (datName.compare("mailid") == 0) {
-        return mailIdLoc;
-    }
 }
 
 // Method to set up pass-man for 1st time use
-void firstTime(passMan &ob, logMan &lM) {
+void firstTime() {
     // Setting up pass-man for 1st time
-    if (std::filesystem::exists(ob.getStringMemberData("enfile")) == false) {
+    if (std::filesystem::exists(cm->enKeyFile) == false) {
         std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
 
         // Generating new encryption key
-        enKey(ob);
+        cm->enKey();
 
         std::cout << "Successfully generated Encryption Key !" << std::endl;
 
         // Logging
-        lM.logData("Set up pass-man for 1st time use");
+        lm->logData("Set up pass-man for 1st time use");
     }
-    // Getting encryption key
-    inpFile.open(ob.getStringMemberData("enfile"));
-    ob.getKey();
-    // Closing file
-    inpFile.clear();
-    inpFile.close();
+
+    // Loading encryption key
+    cm->getKey();
 }
 
 int main(int nArgs, char *allArgs[]) {
     // Initialising working directory    
     // Storing location temporarily
     std::string loc = allArgs[0];
+    loc = loc.substr(0, loc.find_last_of('\\') + 1);
     
     // Initialising objects
-    // passMan onject
-    passMan pM(loc.substr(0, loc.find_last_of('\\') + 1));
-    // logMan object
-    logMan lM(pM);
+    pm = new passMan(loc);
+    lm = new logMan(loc);
+    cm = new cryptMan(loc);
+    sm = new secMan(loc);
 
     // Check and set up pass-man for 1st time use
-    firstTime(pM, lM);
+    firstTime();
     
     std::string oprArg = toLower(allArgs[1]);            // To store operation argument
     std::string refName;                                 // To store reference name
         
     // Checking authorization
-    bool authStatus = checkAuth(pM);                       // To store authorization status
+    bool authStatus = sm->checkAuth();                       // To store authorization status
     // If authorization fails
     if (authStatus == false) {
         // Alerting user if mail-id set up
-        if (std::filesystem::exists(pM.getStringMemberData("mailid")) == true) {
+        if (std::filesystem::exists(sm->mailIdLoc) == true) {
             std::string mailId;                          // To store mail-id from file
             std::string timeString;                      // To store time as string
             time_t now = time(NULL);                     // To store time_t
             char nowTime[26];                            // To store current time
 
             // Getting mail-id from file
-            inpFile.open(pM.getStringMemberData("mailid"));
+            inpFile.open(sm->mailIdLoc);
             std::getline(inpFile, mailId);
             inpFile.clear();
             inpFile.close();
 
             // Decrypting mail-id
-            mailId = inpDecrypt(pM, mailId);
+            mailId = cm->inpDecrypt(mailId);
 
             // Getting current time
             ctime_s(nowTime, 26, &now);
@@ -155,14 +85,14 @@ int main(int nArgs, char *allArgs[]) {
             bool isMailSent = sendMail(mailId, "Unsuccessful access attempt of pass-man", "Someone tried to access your pass-man passwords at time : " + timeString);
 
             // Logging
-            lM.logData("Unsuccessful attempt to use pass-man made");
+            lm->logData("Unsuccessful attempt to use pass-man made");
 
             // Checking status and logging
             if (isMailSent == true) {
-                lM.logData("Sent mail to alert user");
+                lm->logData("Sent mail to alert user");
             }
             else {
-                lM.logData("Failed to send mail to alert user");
+                lm->logData("Failed to send mail to alert user");
             }
         }
 
@@ -181,14 +111,14 @@ int main(int nArgs, char *allArgs[]) {
         refName = toLower(allArgs[2]);
         
         // Calling addPass method of MangMethods file to add a new password
-        isAdded = addPass(pM, refName);
+        isAdded = addPass(refName);
         
         // Checking status
         if (isAdded == true) {
             std::cout << "Successfully stored password !" << std::endl;
 
             // Logging
-            lM.logData("Stored a new pasword with reference name : " + refName);
+            lm->logData("Stored a new pasword with reference name : " + refName);
         }
         else {
             std::cout << "No password was added" << std::endl;
@@ -206,7 +136,7 @@ int main(int nArgs, char *allArgs[]) {
         std::string refName = toLower(allArgs[2]);           // To store refName
         
         // Calling method to get pass
-        isPresent = getPass(pM, refName);
+        isPresent = getPass(refName);
 
         // Checking status
         if (isPresent == false) {
@@ -214,7 +144,7 @@ int main(int nArgs, char *allArgs[]) {
         }
         else {
             // Logging
-            lM.logData("Retrieved password with reference name : " + refName);
+            lm->logData("Retrieved password with reference name : " + refName);
         }
         
         // Exitting from program
@@ -222,10 +152,10 @@ int main(int nArgs, char *allArgs[]) {
     }
     // For getting stored passwords refName list with comments
     else if (oprArg.compare("list") == 0) {
-        getList(pM);
+        getList();
 
         // Logging
-        lM.logData("Retrieved list of store passwords(Reference names only)");
+        lm->logData("Retrieved list of store passwords(Reference names only)");
 
         return 0;
     }
@@ -237,14 +167,14 @@ int main(int nArgs, char *allArgs[]) {
         refName = toLower(allArgs[2]);
         
         // Editing and storing status
-        isEdited = editPass(pM, refName);
+        isEdited = editPass(refName);
 
         // Checking if changes made
         if (isEdited == true) {
             std::cout << "Password update succesful" << std::endl;
 
             // Logging
-            lM.logData("Edited stored password with reference name : " + refName);
+            lm->logData("Edited stored password with reference name : " + refName);
         }
         else {
             std::cout << "No changes were made" << std::endl;
@@ -259,14 +189,14 @@ int main(int nArgs, char *allArgs[]) {
         refName = toLower(allArgs[2]);
 
         // Deleting
-        isDeleted = delPass(pM, refName);
+        isDeleted = delPass(refName);
 
         // Checking status
         if (isDeleted == true) {
             std::cout << "Password deletion successful !" << std::endl;
 
             // Logging
-            lM.logData("Deleted password with reference name : " + refName);
+            lm->logData("Deleted password with reference name : " + refName);
         }
         else {
             std::cout << "No changes were made" << std::endl;
@@ -282,20 +212,20 @@ int main(int nArgs, char *allArgs[]) {
         backLoc = allArgs[2];
 
         // Backing up passwords
-        isBacked = backPass(pM, backLoc);
+        isBacked = backPass(backLoc);
 
         // Checking status
         if (isBacked == true) {
-            std::cout << "Backup successfull !" << endl;
+            std::cout << "Backup successfull !" << std::endl;
 
             // Logging
-            lM.logData("Created backup of store passwords at location : " + backLoc);
+            lm->logData("Created backup of store passwords at location : " + backLoc);
         }
         else {
-            std::cout << "Backup failed !" << endl;
+            std::cout << "Backup failed !" << std::endl;
             
             // Logging
-            lM.logData("Backup creation failed");
+            lm->logData("Backup creation failed");
         }
         return 0;
     }
@@ -308,53 +238,53 @@ int main(int nArgs, char *allArgs[]) {
         backLoc = allArgs[2];
 
         // Restoring from backup
-        isRestored = restorePass(pM, backLoc);
+        isRestored = restorePass(backLoc);
         
         // Checking status
         if (isRestored == true) {
-            std::cout << "Restore successfull !" << endl;
+            std::cout << "Restore successfull !" << std::endl;
 
             // Logging
-            lM.logData("Restored passwords from backup location : " + backLoc);
+            lm->logData("Restored passwords from backup location : " + backLoc);
         }
         else {
-            std::cout << "Restore failed !" << endl;
+            std::cout << "Restore failed !" << std:: endl;
 
             // Logging
-            lM.logData("Restore passwords failed");
+            lm->logData("Restore passwords failed");
         }
         return 0;
     }
     // For changing/adding mail id
     else if (oprArg.compare("mail") == 0) {
         // Getting status
-        bool isMailIdChanged = setEmail(pM);
+        bool isMailIdChanged = setEmail();
 
         // Checking status
         if (isMailIdChanged == true) {
             std::cout << "Mail-id changed succesfully !" << std::endl;
 
             // Logging
-            lM.logData("Changed mail-id");
+            lm->logData("Changed mail-id");
         }
         else {
             std::cout << "Mail-id change failed" << std::endl;
 
             // Logging
-            lM.logData("Mail-id change failed");
+            lm->logData("Mail-id change failed");
         }
         
         return 0;
     }
     // For changing/setting up authorization key
     else if (oprArg.compare("auth") == 0) {
-        bool isAuthDone = authKey(pM);
+        bool isAuthDone = authKey();
         // Checking status
         if (isAuthDone == true) {
             std::cout << "Authorization key changed successfully" << std::endl;
 
             // Logging
-            lM.logData("Changed authorization key");
+            lm->logData("Changed authorization key");
         }
         else {
             std::cout << "Operation cancelled" << std::endl;

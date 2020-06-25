@@ -1,6 +1,6 @@
 // This file contains various methods and data for sending mails
 
-#include <iostream>
+#include "MasterObjects.h"
 
 using namespace System::Net;
 

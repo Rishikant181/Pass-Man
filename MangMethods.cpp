@@ -1,13 +1,6 @@
 // This file contains various methods for management of stored passwords
-#include <fstream>
-#include <string>
-#include <iostream>
-#include <filesystem>
-#include "Crypto.h"
-#include "Helper.h"
-#include "PassMan.h"
-#include "Mailman.h"
-#include "SecMethods.h"
+
+#include "MasterObjects.h"
 
 // Method to get non-optional input
 std::string getReqInput() {
@@ -27,19 +20,19 @@ std::string getReqInput() {
 }
 
 // Method to add a new password to the database
-bool addPass(passMan &ob, std::string refName) {
+bool addPass(std::string refName) {
 	std::string passCom;										// To store commments about passwrds
 	std::string actPass;										// To store the actual password
 	std::string conPass;										// To store the confirmation password
 
 	// Checking if duplicate refName
-	if (std::filesystem::exists(ob.getStringMemberData("data") + refName + ".pass") == true) {
+	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == true) {
 		std::cout << "Reference name already exists, please enter another name" << std::endl;
 		return false;
 	}
 
 	std::cout << "Comments (Optional) : ";
-	std::getline(cin, passCom);
+	std::getline(std::cin, passCom);
 	std::cout << "Enter password   : ";
 	actPass = getReqInput();
 	std::cout << "Confirm password : ";
@@ -48,8 +41,8 @@ bool addPass(passMan &ob, std::string refName) {
 	// Checking if conPass == actPass
 	if (conPass.compare(actPass) == 0) {
 		// Adding data to database
-		outFile.open(ob.getStringMemberData("data") + refName + ".pass");
-		outFile << inpEncrypt(ob, actPass) << " " << passCom << "\n";
+		outFile.open(pm->dataLocation + refName + ".pass");
+		outFile << cm->inpEncrypt(actPass) << " " << passCom << "\n";
 		outFile.clear();
 		outFile.close();
 		return true;
@@ -61,34 +54,34 @@ bool addPass(passMan &ob, std::string refName) {
 }
 
 // Method to get encrypted pass from database
-bool getPass(passMan &ob, std::string refName) {
+bool getPass(std::string refName) {
 	std::string enPass;											// To store encrypted password
 	// If reference name not found
-	if (std::filesystem::exists(ob.getStringMemberData("data") + refName + ".pass") == false) {
+	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == false) {
 		// Exitting from program
 		return false;
 	}
-	inpFile.open(ob.getStringMemberData("data") + refName + ".pass");
+	inpFile.open(pm->dataLocation + refName + ".pass");
 	std::getline(inpFile, enPass);
 	inpFile.clear();
 	inpFile.close();
 	enPass = enPass.substr(0, enPass.find(' '));
-	std::cout << inpDecrypt(ob, enPass);
+	std::cout << cm->inpDecrypt(enPass);
 	return true;
 }
 
 // Method to get the list of all passwords stored by pass-man and displaying only refName and comments
-void getList(passMan &ob) {
+void getList() {
 	std::string refName;									// To store file name
 	std::string passCom;									// To store comment
 	// Iterating through directory
-	for (auto& file : std::filesystem::directory_iterator(ob.getStringMemberData("data"))) {
+	for (auto& file : std::filesystem::directory_iterator(pm->dataLocation)) {
 		// Getting refName
-		refName = file.path().string().substr(ob.getStringMemberData("data").length());
+		refName = file.path().string().substr(pm->dataLocation.length());
 		refName = refName.substr(0, refName.length() - 5);
 		
 		// Getting comment from file
-		inpFile.open(ob.getStringMemberData("data") + refName + ".pass");
+		inpFile.open(pm->dataLocation + refName + ".pass");
 		std::getline(inpFile, passCom);
 		inpFile.clear();
 		inpFile.close();
@@ -101,7 +94,7 @@ void getList(passMan &ob) {
 }
 
 // Method to modify a stored password using refName
-bool editPass(passMan &ob, string refName) {
+bool editPass(std::string refName) {
 	int oprChoice;											// To store operation choice
 	std::string choice;
 	std::string line;										// To store the input from file
@@ -110,9 +103,9 @@ bool editPass(passMan &ob, string refName) {
 	std::string newPass;									// To store new password
 	std::string newPassCon;									// To store new password confirmation
 	// If refName exists
-	if (std::filesystem::exists(ob.getStringMemberData("data") + refName + ".pass") == true) {
+	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == true) {
 		// Storing original line temporarily
-		inpFile.open(ob.getStringMemberData("data") + refName + ".pass");
+		inpFile.open(pm->dataLocation + refName + ".pass");
 		std::getline(inpFile, line);
 		inpFile.clear();
 		inpFile.close();
@@ -124,10 +117,10 @@ bool editPass(passMan &ob, string refName) {
 		
 		try {
 			// Taking choice
-			std::getline(cin, choice);
+			std::getline(std::cin, choice);
 			oprChoice = std::stoi(choice);
 		}
-		catch (invalid_argument ia) {
+		catch (std::invalid_argument ia) {
 			std::cout << "Please enter number only !" << std::endl;
 			return false;
 		}
@@ -139,10 +132,10 @@ bool editPass(passMan &ob, string refName) {
 			newRefName = getReqInput();
 
 			// Deleting old data
-			std::filesystem::remove(ob.getStringMemberData("data") + refName + ".pass");
+			std::filesystem::remove(pm->dataLocation + refName + ".pass");
 
 			// Writing new data
-			outFile.open(ob.getStringMemberData("data") + newRefName + ".pass");
+			outFile.open(pm->dataLocation + newRefName + ".pass");
 			outFile << line;
 			outFile.clear();
 			outFile.close();
@@ -151,13 +144,13 @@ bool editPass(passMan &ob, string refName) {
 		// For changing comment
 		case 2: {
 			std::cout << "Enter new comment : ";
-			std::getline(cin, newPassCom);
+			std::getline(std::cin, newPassCom);
 
 			// Deleting old data
-			std::filesystem::remove(ob.getStringMemberData("data") + refName + ".pass");
+			std::filesystem::remove(pm->dataLocation + refName + ".pass");
 
 			// Writing new data
-			outFile.open(ob.getStringMemberData("data") + refName + ".pass");
+			outFile.open(pm->dataLocation + refName + ".pass");
 			outFile << line.substr(0, line.find(' ')) + " " + newPassCom;
 			outFile.clear();
 			outFile.close();
@@ -177,11 +170,11 @@ bool editPass(passMan &ob, string refName) {
 			}
 			
 			// Deleting old data
-			std::filesystem::remove(ob.getStringMemberData("data") + refName + ".pass");
+			std::filesystem::remove(pm->dataLocation + refName + ".pass");
 
 			// Writing new data
-			outFile.open(ob.getStringMemberData("data") + refName + ".pass");
-			outFile << inpEncrypt(ob, newPass) + line.substr(line.find(' '));
+			outFile.open(pm->dataLocation + refName + ".pass");
+			outFile << cm->inpEncrypt(newPass) + line.substr(line.find(' '));
 			outFile.clear();
 			outFile.close();
 			return true;
@@ -200,21 +193,21 @@ bool editPass(passMan &ob, string refName) {
 }
 
 // Method to delete a stored password
-bool delPass(passMan &ob, std::string refName) {
+bool delPass(std::string refName) {
 	std::string delChoice;											// To store confirmation choice
 	// Checking if reference name does not exist
-	if (std::filesystem::exists(ob.getStringMemberData("data") + refName + ".pass") == false) {
+	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == false) {
 		std::cout << "No such reference name found !" << std::endl;
 		return false;
 	}
 	// If exists
 	std::cout << "Are you sure you want to delete " << refName << "?(y/n) : ";
-	std::getline(cin, delChoice);
+	std::getline(std::cin, delChoice);
 
 	// If confirmed yes
 	if (toLower(delChoice).compare("y") == 0) {
 		// Deleting
-		std::filesystem::remove(ob.getStringMemberData("data") + refName + ".pass");
+		std::filesystem::remove(pm->dataLocation + refName + ".pass");
 		return true;
 	}
 	// If no
@@ -225,10 +218,10 @@ bool delPass(passMan &ob, std::string refName) {
 }
 
 // Method to backup passwords to specified location
-bool backPass(passMan &ob, std::string backLoc) {
+bool backPass(std::string backLoc) {
 	// If specified location does not exist
 	if (std::filesystem::exists(backLoc) == false) {
-		std::cout << "Specified location does not exist ! Please specify a different location" << endl;
+		std::cout << "Specified location does not exist ! Please specify a different location" << std::endl;
 		return false;
 	}
 
@@ -236,16 +229,16 @@ bool backPass(passMan &ob, std::string backLoc) {
 	// Creating folder
 	backLoc = backLoc + "\\Pass-Man_Backup";
 	std::filesystem::create_directory(backLoc);
-	std::filesystem::copy(ob.getStringMemberData("data"), backLoc);
+	std::filesystem::copy(pm->dataLocation, backLoc);
 
 	return true;
 }
 
 // Method tp restore passwords from specific location
-bool restorePass(passMan &ob, std::string backLoc) {
+bool restorePass(std::string backLoc) {
 	// If specified location does not exist
 	if (std::filesystem::exists(backLoc) == false) {
-		std::cout << "Specified backup location does not exist ! Please specify a different location" << endl;
+		std::cout << "Specified backup location does not exist ! Please specify a different location" << std::endl;
 		return false;
 	}
 	
@@ -253,10 +246,10 @@ bool restorePass(passMan &ob, std::string backLoc) {
 	for (auto& fileName : std::filesystem::directory_iterator(backLoc)) {
 		// Trying to copy file
 		try {
-			std::filesystem::copy(std::filesystem::absolute(fileName.path()), ob.getStringMemberData("data"));
+			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->dataLocation);
 		}
 		// If file already exists
-		catch (exception e) {
+		catch (std::exception e) {
 			// Skip over to next file if this file already exists
 			continue;
 		}
@@ -266,20 +259,20 @@ bool restorePass(passMan &ob, std::string backLoc) {
 }
 
 // Method to change/create new authorization key
-bool authKey(passMan &ob) {
+bool authKey() {
 	std::string newAuthKey;										// To store new authorization key
 	// Checking if previous authorization key present
-	if (std::filesystem::exists(ob.getStringMemberData("aufile")) == true) {
+	if (std::filesystem::exists(sm->auFileName) == true) {
 		std::cout << "Authorization key has already been set up. Do you wish to change it ?(y/n) : ";
 		std::string aChoice;
 		std::getline(std::cin, aChoice);
 		// If yes
 		if (aChoice.compare("y") == 0) {
 			// Deleting previous auth key
-			std::filesystem::remove(ob.getStringMemberData("aufile"));
+			std::filesystem::remove(sm->auFileName);
 			
 			// Changing authorization key
-			changeAuthKey(ob);
+			sm->changeAuthKey();
 			
 			return true;
 		}
@@ -293,7 +286,7 @@ bool authKey(passMan &ob) {
 		std::getline(std::cin, aChoice);
 		// If yes
 		if (aChoice.compare("y") == 0) {
-			if (changeAuthKey(ob) == true) {
+			if (sm->changeAuthKey() == true) {
 				return true;
 			}
 			else {
@@ -307,7 +300,7 @@ bool authKey(passMan &ob) {
 }
 
 // Method to get mail-id to send notifications
-bool setEmail(passMan &ob) {
+bool setEmail() {
 	bool isMailSent;											// To check if mail is sent
 	std::string mailId;											// To store mail-id entered by user
 	std::string oneTimePass;									// To store one time password
@@ -316,7 +309,7 @@ bool setEmail(passMan &ob) {
 
 	// Checking if mail already set up
 	// If does not exist
-	if (std::filesystem::exists(ob.getStringMemberData("mailid")) == false) {
+	if (std::filesystem::exists(sm->mailIdLoc) == false) {
 		std::cout << "Mail-id has not been set up. Do you want to set it now ?(y/n) : ";
 	}
 	// If exists
@@ -332,14 +325,14 @@ bool setEmail(passMan &ob) {
 																
 	// Asking for mail id to send alert notifications
 	std::cout << "Enter mail-id to send alert notifications to : ";
-	std::getline(cin, mailId);
+	std::getline(std::cin, mailId);
 
 	// To remove mail-id
 	if (mailId.compare("") == 0) {
 		// If set up earlier
-		if (std::filesystem::exists(ob.getStringMemberData("mailid")) == true) {
+		if (std::filesystem::exists(sm->mailIdLoc) == true) {
 			// Removing mail-id
-			std::filesystem::remove(ob.getStringMemberData("mailid"));
+			std::filesystem::remove(sm->mailIdLoc);
 			std::cout << "Removed mail-id successfully !" << std::endl;
 		}
 		else {
@@ -365,7 +358,7 @@ bool setEmail(passMan &ob) {
 	}
 
 	// Checking OTP
-	getline(cin, inputOtp);
+	std::getline(std::cin, inputOtp);
 	if (inputOtp.compare(oneTimePass) != 0) {
 		std::cout << "Wrong OTP! Email verification failed !" << std::endl;
 		return false;
@@ -374,8 +367,8 @@ bool setEmail(passMan &ob) {
 	std::cout << "Email-id verification complete !" << std::endl;
 	
 	// Storing email to file
-	outFile.open(ob.getStringMemberData("mailid"));
-	outFile << inpEncrypt(ob, mailId) << std::endl;
+	outFile.open(sm->mailIdLoc);
+	outFile << cm->inpEncrypt(mailId) << std::endl;
 	outFile.clear();
 	outFile.close();
 	

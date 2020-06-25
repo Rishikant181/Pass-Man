@@ -1,7 +1,6 @@
 // This file contains various helper methods
-#include <iostream>
-#include <string>
-#include <ctime>
+
+#include "MasterObjects.h"
 
 // Method to convert a string to lowercase
 std::string toLower(std::string inpStr) {

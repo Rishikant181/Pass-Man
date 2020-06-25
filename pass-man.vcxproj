@@ -125,6 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,6 +159,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Mailman.h" />
     <ClInclude Include="MangMethods.h" />
+    <ClInclude Include="MasterObjects.h" />
     <ClInclude Include="PassMan.h" />
     <ClInclude Include="SecMethods.h" />
   </ItemGroup>

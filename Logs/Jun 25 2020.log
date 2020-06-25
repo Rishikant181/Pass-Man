@@ -1,0 +1,5 @@
+13:31:25	->	Set up pass-man for 1st time use
+13:31:38	->	Stored a new pasword with reference name : test1
+13:31:54	->	Retrieved list of store passwords(Reference names only)
+13:32:06	->	Changed authorization key
+13:32:28	->	Retrieved password with reference name : test1
