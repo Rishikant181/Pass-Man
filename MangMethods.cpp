@@ -26,7 +26,7 @@ bool addPass(std::string refName) {
 	std::string conPass;										// To store the confirmation password
 
 	// Checking if duplicate refName
-	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == true) {
+	if (std::filesystem::exists(pm->getStringData("dataloc") + refName + ".pass") == true) {
 		std::cout << "Reference name already exists, please enter another name" << std::endl;
 		return false;
 	}
@@ -41,7 +41,7 @@ bool addPass(std::string refName) {
 	// Checking if conPass == actPass
 	if (conPass.compare(actPass) == 0) {
 		// Adding data to database
-		outFile.open(pm->dataLocation + refName + ".pass");
+		outFile.open(pm->getStringData("dataloc") + refName + ".pass");
 		outFile << cm->inpEncrypt(actPass) << " " << passCom << "\n";
 		outFile.clear();
 		outFile.close();
@@ -57,11 +57,11 @@ bool addPass(std::string refName) {
 bool getPass(std::string refName) {
 	std::string enPass;											// To store encrypted password
 	// If reference name not found
-	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == false) {
+	if (std::filesystem::exists(pm->getStringData("dataloc") + refName + ".pass") == false) {
 		// Exitting from program
 		return false;
 	}
-	inpFile.open(pm->dataLocation + refName + ".pass");
+	inpFile.open(pm->getStringData("dataloc") + refName + ".pass");
 	std::getline(inpFile, enPass);
 	inpFile.clear();
 	inpFile.close();
@@ -75,13 +75,13 @@ void getList() {
 	std::string refName;									// To store file name
 	std::string passCom;									// To store comment
 	// Iterating through directory
-	for (auto& file : std::filesystem::directory_iterator(pm->dataLocation)) {
+	for (auto& file : std::filesystem::directory_iterator(pm->getStringData("dataloc"))) {
 		// Getting refName
-		refName = file.path().string().substr(pm->dataLocation.length());
+		refName = file.path().string().substr(pm->getStringData("dataloc").length());
 		refName = refName.substr(0, refName.length() - 5);
 		
 		// Getting comment from file
-		inpFile.open(pm->dataLocation + refName + ".pass");
+		inpFile.open(pm->getStringData("dataloc") + refName + ".pass");
 		std::getline(inpFile, passCom);
 		inpFile.clear();
 		inpFile.close();
@@ -103,9 +103,9 @@ bool editPass(std::string refName) {
 	std::string newPass;									// To store new password
 	std::string newPassCon;									// To store new password confirmation
 	// If refName exists
-	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == true) {
+	if (std::filesystem::exists(pm->getStringData("dataloc") + refName + ".pass") == true) {
 		// Storing original line temporarily
-		inpFile.open(pm->dataLocation + refName + ".pass");
+		inpFile.open(pm->getStringData("dataloc") + refName + ".pass");
 		std::getline(inpFile, line);
 		inpFile.clear();
 		inpFile.close();
@@ -132,10 +132,10 @@ bool editPass(std::string refName) {
 			newRefName = getReqInput();
 
 			// Deleting old data
-			std::filesystem::remove(pm->dataLocation + refName + ".pass");
+			std::filesystem::remove(pm->getStringData("dataloc") + refName + ".pass");
 
 			// Writing new data
-			outFile.open(pm->dataLocation + newRefName + ".pass");
+			outFile.open(pm->getStringData("dataloc") + newRefName + ".pass");
 			outFile << line;
 			outFile.clear();
 			outFile.close();
@@ -147,10 +147,10 @@ bool editPass(std::string refName) {
 			std::getline(std::cin, newPassCom);
 
 			// Deleting old data
-			std::filesystem::remove(pm->dataLocation + refName + ".pass");
+			std::filesystem::remove(pm->getStringData("dataloc") + refName + ".pass");
 
 			// Writing new data
-			outFile.open(pm->dataLocation + refName + ".pass");
+			outFile.open(pm->getStringData("dataloc") + refName + ".pass");
 			outFile << line.substr(0, line.find(' ')) + " " + newPassCom;
 			outFile.clear();
 			outFile.close();
@@ -170,10 +170,10 @@ bool editPass(std::string refName) {
 			}
 			
 			// Deleting old data
-			std::filesystem::remove(pm->dataLocation + refName + ".pass");
+			std::filesystem::remove(pm->getStringData("dataloc") + refName + ".pass");
 
 			// Writing new data
-			outFile.open(pm->dataLocation + refName + ".pass");
+			outFile.open(pm->getStringData("dataloc") + refName + ".pass");
 			outFile << cm->inpEncrypt(newPass) + line.substr(line.find(' '));
 			outFile.clear();
 			outFile.close();
@@ -196,7 +196,7 @@ bool editPass(std::string refName) {
 bool delPass(std::string refName) {
 	std::string delChoice;											// To store confirmation choice
 	// Checking if reference name does not exist
-	if (std::filesystem::exists(pm->dataLocation + refName + ".pass") == false) {
+	if (std::filesystem::exists(pm->getStringData("dataloc") + refName + ".pass") == false) {
 		std::cout << "No such reference name found !" << std::endl;
 		return false;
 	}
@@ -207,7 +207,7 @@ bool delPass(std::string refName) {
 	// If confirmed yes
 	if (toLower(delChoice).compare("y") == 0) {
 		// Deleting
-		std::filesystem::remove(pm->dataLocation + refName + ".pass");
+		std::filesystem::remove(pm->getStringData("dataloc") + refName + ".pass");
 		return true;
 	}
 	// If no
@@ -229,7 +229,7 @@ bool backPass(std::string backLoc) {
 	// Creating folder
 	backLoc = backLoc + "\\Pass-Man_Backup";
 	std::filesystem::create_directory(backLoc);
-	std::filesystem::copy(pm->dataLocation, backLoc);
+	std::filesystem::copy(pm->getStringData("dataloc"), backLoc);
 
 	return true;
 }
@@ -246,7 +246,7 @@ bool restorePass(std::string backLoc) {
 	for (auto& fileName : std::filesystem::directory_iterator(backLoc)) {
 		// Trying to copy file
 		try {
-			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->dataLocation);
+			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->getStringData("dataloc"));
 		}
 		// If file already exists
 		catch (std::exception e) {
@@ -262,14 +262,14 @@ bool restorePass(std::string backLoc) {
 bool authKey() {
 	std::string newAuthKey;										// To store new authorization key
 	// Checking if previous authorization key present
-	if (std::filesystem::exists(sm->auFileName) == true) {
+	if (std::filesystem::exists(pm->getStringData("aufile")) == true) {
 		std::cout << "Authorization key has already been set up. Do you wish to change it ?(y/n) : ";
 		std::string aChoice;
 		std::getline(std::cin, aChoice);
 		// If yes
 		if (aChoice.compare("y") == 0) {
 			// Deleting previous auth key
-			std::filesystem::remove(sm->auFileName);
+			std::filesystem::remove(pm->getStringData("aufile"));
 			
 			// Changing authorization key
 			sm->changeAuthKey();
@@ -309,7 +309,7 @@ bool setEmail() {
 
 	// Checking if mail already set up
 	// If does not exist
-	if (std::filesystem::exists(sm->mailIdLoc) == false) {
+	if (std::filesystem::exists(pm->getStringData("mailloc")) == false) {
 		std::cout << "Mail-id has not been set up. Do you want to set it now ?(y/n) : ";
 	}
 	// If exists
@@ -330,9 +330,9 @@ bool setEmail() {
 	// To remove mail-id
 	if (mailId.compare("") == 0) {
 		// If set up earlier
-		if (std::filesystem::exists(sm->mailIdLoc) == true) {
+		if (std::filesystem::exists(pm->getStringData("mailloc")) == true) {
 			// Removing mail-id
-			std::filesystem::remove(sm->mailIdLoc);
+			std::filesystem::remove(pm->getStringData("mailloc"));
 			std::cout << "Removed mail-id successfully !" << std::endl;
 		}
 		else {
@@ -367,7 +367,7 @@ bool setEmail() {
 	std::cout << "Email-id verification complete !" << std::endl;
 	
 	// Storing email to file
-	outFile.open(sm->mailIdLoc);
+	outFile.open(pm->getStringData("mailloc"));
 	outFile << cm->inpEncrypt(mailId) << std::endl;
 	outFile.clear();
 	outFile.close();

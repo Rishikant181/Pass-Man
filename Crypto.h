@@ -5,11 +5,9 @@ private:
 	// Member data
 	int enKeyMul;														// To store encryption key multiplicative part
 	int enKeyAdd;														// To store encryption key additive part
+	std::string enKeyFile;												// To store encryption key file name
 
 public:
-	// Member data
-	std::string enKeyFile;												// To store encryption key file name
-	
 	// Member method
 	cryptMan(std::string workDir);										// Constructor
 	void enKey();														// Method to generate encryption key

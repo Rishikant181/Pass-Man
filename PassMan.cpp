@@ -19,49 +19,77 @@ passMan::passMan(std::string dir) {
     // Initialising member data
     // Initialising working folder
     workDir = dir;
+    
+    // Initialising file and folder locations
     dataLocation = workDir + "Data\\";
+    enKeyFile = workDir + "Key\\EncryptionKey.key";
+    logDir = workDir + "Logs\\";
+    auFileName = workDir + "Security\\AuthPass.pass";
+    mailIdLoc = workDir + "Security\\Mail-id.id";
 }
 
-// Method to set up pass-man for 1st time use
+// Defining getStringData method
+std::string passMan::getStringData(std::string dName) {
+    // If enKeyFile
+    if (dName.compare("efile") == 0) {
+        return enKeyFile;
+    }
+    // If dataLocation
+    else if (dName.compare("dataloc") == 0) {
+        return dataLocation;
+    }
+    // If logDir
+    else if (dName.compare("logdir") == 0) {
+        return logDir;
+    }
+    // If auFileName
+    else if (dName.compare("aufile") == 0) {
+        return auFileName;
+    }
+    // If mailIdLoc
+    else if (dName.compare("mailloc") == 0) {
+        return mailIdLoc;
+    }
+}
+
 void firstTime() {
-    // Setting up pass-man for 1st time
-    if (std::filesystem::exists(cm->enKeyFile) == false) {
+    // Checking if pass-man started for 1st time
+    if (std::filesystem::exists(pm->getStringData("efile")) == false) {
         std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
 
         // Generating new encryption key
         cm->enKey();
-
         std::cout << "Successfully generated Encryption Key !" << std::endl;
 
         // Logging
         lm->logData("Set up pass-man for 1st time use");
     }
-
-    // Loading encryption key
-    cm->getKey();
 }
 
 int main(int nArgs, char *allArgs[]) {
     // Initialising working directory    
     // Storing location temporarily
-    std::string loc = allArgs[0];
-    loc = loc.substr(0, loc.find_last_of('\\') + 1);
+    std::string workDir = allArgs[0];
+    workDir = workDir.substr(0, workDir.find_last_of('\\') + 1);
     
     // Initialising objects temporarily
-    passMan tempPm(loc);
-    logMan tempLm(loc);
-    cryptMan tempCm(loc);
-    secMan tempSm(loc);
-
-    // Passing the objects to global pointers
+    passMan tempPm(workDir);
+    logMan tempLm(tempPm.getStringData("logdir"));
+    cryptMan tempCm(tempPm.getStringData("efile"));
+    secMan tempSm(tempPm.getStringData("aufile"), tempPm.getStringData("mailloc"));
+    
+    // Assigning temporary objects' reference to global pointers
     pm = &tempPm;
     lm = &tempLm;
     cm = &tempCm;
     sm = &tempSm;
 
-    // Check and set up pass-man for 1st time use
+    // Checking if this is the first time pass-man is started
     firstTime();
-    
+
+    // Loading encryption key
+    cm->getKey();
+
     std::string oprArg = toLower(allArgs[1]);            // To store operation argument
     std::string refName;                                 // To store reference name
         
@@ -69,40 +97,17 @@ int main(int nArgs, char *allArgs[]) {
     bool authStatus = sm->checkAuth();                       // To store authorization status
     // If authorization fails
     if (authStatus == false) {
-        // Alerting user if mail-id set up
-        if (std::filesystem::exists(sm->mailIdLoc) == true) {
-            std::string mailId;                          // To store mail-id from file
-            std::string timeString;                      // To store time as string
-            time_t now = time(NULL);                     // To store time_t
-            char nowTime[26];                            // To store current time
+        bool isMailSent = sm->failAuthMail();
+        
+        // Logging
+        lm->logData("Unsuccessful attempt to use pass-man made");
 
-            // Getting mail-id from file
-            inpFile.open(sm->mailIdLoc);
-            std::getline(inpFile, mailId);
-            inpFile.clear();
-            inpFile.close();
-
-            // Decrypting mail-id
-            mailId = cm->inpDecrypt(mailId);
-
-            // Getting current time
-            ctime_s(nowTime, 26, &now);
-            // Storing time as string
-            timeString = nowTime;
-
-            // Sending mail and storing status
-            bool isMailSent = sendMail(mailId, "Unsuccessful access attempt of pass-man", "Someone tried to access your pass-man passwords at time : " + timeString);
-
-            // Logging
-            lm->logData("Unsuccessful attempt to use pass-man made");
-
-            // Checking status and logging
-            if (isMailSent == true) {
-                lm->logData("Sent mail to alert user");
-            }
-            else {
-                lm->logData("Failed to send mail to alert user");
-            }
+        // Checking status and logging
+        if (isMailSent == true) {
+            lm->logData("Sent mail to alert user");
+        }
+        else {
+            lm->logData("Failed to send mail to alert user");
         }
 
         std::cout << "Failed to authorize. Suspending further operations" << std::endl;

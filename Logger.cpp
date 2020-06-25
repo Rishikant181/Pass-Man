@@ -5,10 +5,10 @@
 // Defining Logger class
 
 // Defining constructor
-logMan::logMan(std::string dir) {
+logMan::logMan(std::string workDir) {
 	// Initialising vars
 	// Private member data
-	logDir = dir + "Logs\\";
+	logDir = workDir;
 }
 
 // Defining logData method
@@ -30,8 +30,8 @@ void logMan::logData(std::string msg) {
 	nowDate = nowDateTimeString.substr(4, 7) + nowDateTimeString.substr(20, 4);
 	nowTime = nowDateTimeString.substr(11, 8);
 
-	outLogFile.open(logDir + nowDate + ".log", std::ios_base::app);
-	outLogFile << nowTime + "	->	" + msg << std::endl;
-	outLogFile.clear();
-	outLogFile.close();
+	outFile.open(logDir + nowDate + ".log", std::ios_base::app);
+	outFile << nowTime + "	->	" + msg << std::endl;
+	outFile.clear();
+	outFile.close();
 }

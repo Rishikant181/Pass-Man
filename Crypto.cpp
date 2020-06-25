@@ -5,7 +5,7 @@
 // Defining member methods
 // Defining constructor
 cryptMan::cryptMan(std::string workDir) {
-	enKeyFile = workDir + "Key\\EncryptionKey.key";
+	enKeyFile = workDir;
 }
 
 // Defining method enKey
