@@ -1,6 +1,6 @@
 // This file contains various methods for management of stored passwords
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
 // Method to get non-optional input
 std::string getReqInput() {

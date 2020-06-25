@@ -1,6 +1,6 @@
 // This file contains various methods and data for sending mails
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
 using namespace System::Net;
 

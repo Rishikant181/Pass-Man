@@ -1,6 +1,6 @@
 // This files contains various methods related to security
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
 // Using cli .net library
 using namespace System::Net;

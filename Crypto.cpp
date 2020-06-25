@@ -1,6 +1,6 @@
 // This file contains various methods related to encrypting and decrypting of data
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
 // Defining member methods
 // Defining constructor

@@ -1,6 +1,6 @@
 // This file contains various helper methods
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
 // Method to convert a string to lowercase
 std::string toLower(std::string inpStr) {

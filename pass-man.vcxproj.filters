@@ -59,7 +59,7 @@
     <ClInclude Include="Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MasterObjects.h">
+    <ClInclude Include="GlobalMembers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

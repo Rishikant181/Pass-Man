@@ -1,6 +1,6 @@
 // This method contains the logger class to log data
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
 // Defining Logger class
 

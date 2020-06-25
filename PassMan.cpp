@@ -1,14 +1,17 @@
 // pass-man.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
-#include "MasterObjects.h"
+#include "GlobalMembers.h"
 
-// Global vars
-// Files to handle reading-writing of database
-std::ifstream inpFile;                                  // File to handle reading from file
-std::ofstream outFile;                                  // File to handle writing to file
+// Defining global vars
+// Vars for file IO
+std::ifstream inpFile;
+std::ofstream outFile;
 
-// Other vars
-std::string authPass;                                   // To store authorization password
+// Vars to store objects
+passMan* pm;
+logMan* lm;
+cryptMan* cm;
+secMan* sm;
 
 // Implementing class passMan
 // Defining constructor
@@ -44,11 +47,17 @@ int main(int nArgs, char *allArgs[]) {
     std::string loc = allArgs[0];
     loc = loc.substr(0, loc.find_last_of('\\') + 1);
     
-    // Initialising objects
-    pm = new passMan(loc);
-    lm = new logMan(loc);
-    cm = new cryptMan(loc);
-    sm = new secMan(loc);
+    // Initialising objects temporarily
+    passMan tempPm(loc);
+    logMan tempLm(loc);
+    cryptMan tempCm(loc);
+    secMan tempSm(loc);
+
+    // Passing the objects to global pointers
+    pm = &tempPm;
+    lm = &tempLm;
+    cm = &tempCm;
+    sm = &tempSm;
 
     // Check and set up pass-man for 1st time use
     firstTime();
