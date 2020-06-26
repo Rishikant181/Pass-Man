@@ -43,5 +43,24 @@ std::string cryptMan::inpEncrypt(std::string inpStr) {
 
 // Defining method inpDecypt
 std::string cryptMan::inpDecrypt(std::string inpStr) {
-	
+	int inpStrLen = inpStr.length();									// To store inputStr length
+	std::string deStr = "";												// To store decrypted string
+	std::string enChar = "";											// To store each encrypted char
+
+	// Decrypting
+	for (int i = 0; i < inpStrLen; i++) {
+		// If no delimiter
+		if (delimChars.find(inpStr[i]) == std::string::npos) {
+			enChar = enChar + inpStr[i];
+		}
+		// If delimiter
+		else {
+			// Getting original ascii val and converting to char
+			char realChar = (toDeci(enChar, base) + enKeyAdd) / enKeyMul;
+			deStr = deStr + realChar;
+			enChar = "";
+		}
+	}
+
+	return deStr;
 }
