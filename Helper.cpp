@@ -35,6 +35,15 @@ std::string subStr(std::string line, char reqChar, int firstOccur, int secondOcc
 	return outStr;
 }
 
+// Method to raise a number to a given power and return in long long data type
+long long toPower(long long base, long long power) {
+	long long outNum = 1;
+	for (int i = 0; i < power; i++) {
+		outNum = outNum * base;
+	}
+	return outNum;
+}
+
 // Method to generate a random alphanumeric string of length l
 std::string randomString(int lenString) {
 	std::srand(time(NULL));
@@ -54,4 +63,59 @@ std::string randomString(int lenString) {
 	}
 
 	return randString;
+}
+
+// Method to convert a decimal number to any given base
+std::string toBase(long long inpNum, int base) {
+	std::string numSet = "0123456789";									// To store number set
+	std::string alpSet = "abcdefghij";									// To store alphabet set
+	std::string outNum = "";											// To store output number
+	int numNum = base / 2;												// To store number of numbers to use
+	int numAlp = base - numNum;											// To store number of alphabets to use
+
+	// Converting to base
+	while (inpNum != 0) {
+		// Getting each digit
+		int rem = inpNum % base;
+
+		// If digit is used
+		if (rem < numNum) {
+			outNum = numSet[rem] + outNum;
+		}
+		// If alphabet used
+		else {
+			outNum = alpSet[rem - numNum] + outNum;
+		}
+
+		inpNum = inpNum / base;
+	}
+
+	return outNum;
+}
+
+// Method to convert from a specified base to decimal
+long long toDeci(std::string inpNum, int base) {
+	std::string numSet = "0123456789";									// To store number set
+	std::string alpSet = "abcdefghij";									// To store alphabet set
+	std::string realVal = "";											// To store real face value of each symbol
+	long long outNum = 0;												// To store output number
+	int numNum = base / 2;												// To store number of numbers to use
+	int numAlp = base - numNum;											// To store number of alphabets to use
+
+	// Getting real face values of each symbol
+	for (int i = 0; i < base; i++) {
+		if (i < numNum) {
+			realVal = realVal + numSet[i];
+		}
+		else {
+			realVal = realVal + alpSet[i - numNum];
+		}
+	}
+
+	// Converting to decimal
+	for (int i = inpNum.length() - 1; i >= 0; i--) {
+		outNum = outNum + (realVal.find(inpNum[i]) * toPower(base, inpNum.length() - 1 - i));
+	}
+
+	return outNum;
 }
