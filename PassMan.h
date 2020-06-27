@@ -6,7 +6,7 @@ private:
 	// Member data declaration
 	std::string workDir;											// To store working directory
 	std::string dataLocation;										// To store location of stored data
-	std::string enKeyFile;											// To store location of encryption key file
+	std::string refLocation;										// To store location of reference name data
 	std::string logDir;												// To store logs directory name
 	std::string auFileName;											// To store auth key file name
 	std::string mailIdLoc;											// To store mail-id file location

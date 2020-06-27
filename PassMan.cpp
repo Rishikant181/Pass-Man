@@ -22,7 +22,7 @@ passMan::passMan(std::string dir) {
     
     // Initialising file and folder locations
     dataLocation = workDir + "Data\\";
-    enKeyFile = workDir + "Key\\EncryptionKey.key";
+    refLocation = workDir + "Refs\\";
     logDir = workDir + "Logs\\";
     auFileName = workDir + "Security\\AuthPass.pass";
     mailIdLoc = workDir + "Security\\Mail-id.id";
@@ -33,6 +33,10 @@ std::string passMan::getStringData(std::string dName) {
     // If dataLocation
     if (dName.compare("dataloc") == 0) {
         return dataLocation;
+    }
+    // If refLocation
+    else if (dName.compare("refloc") == 0) {
+        return refLocation;
     }
     // If logDir
     else if (dName.compare("logdir") == 0) {
@@ -141,7 +145,7 @@ int main(int nArgs, char *allArgs[]) {
             std::cout << "Successfully stored password !" << std::endl;
 
             // Logging
-            lm->logData("Stored a new pasword with reference name : " + refName);
+            lm->logData("Stored a new pasword with hashed reference name : " + std::to_string(std::hash<std::string>{}(refName)));
         }
         else {
             std::cout << "No password was added" << std::endl;
@@ -195,7 +199,7 @@ int main(int nArgs, char *allArgs[]) {
             std::cout << "Password update succesful" << std::endl;
 
             // Logging
-            lm->logData("Edited stored password with reference name : " + refName);
+            lm->logData("Edited stored password with hashed reference name : " + std::to_string(std::hash<std::string>{}(refName)));
         }
         else {
             std::cout << "No changes were made" << std::endl;
@@ -217,7 +221,7 @@ int main(int nArgs, char *allArgs[]) {
             std::cout << "Password deletion successful !" << std::endl;
 
             // Logging
-            lm->logData("Deleted password with reference name : " + refName);
+            lm->logData("Deleted password with hashed reference name : " + std::to_string(std::hash<std::string>{}(refName)));
         }
         else {
             std::cout << "No changes were made" << std::endl;
