@@ -1,16 +1,8 @@
-﻿  Crypto.cpp
-D:\Developement\C++\pass-man\Crypto.cpp(14,17): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-D:\Developement\C++\pass-man\Crypto.cpp(55,31): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\Developement\C++\pass-man\Crypto.cpp(75,32): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Helper.cpp
-D:\Developement\C++\pass-man\Helper.cpp(7,30): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\Developement\C++\pass-man\Helper.cpp(17,29): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\Developement\C++\pass-man\Helper.cpp(40,17): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Logger.cpp
-  MangMethods.cpp
-  PassMan.cpp
+﻿  PassMan.cpp
+  SecMethods.cpp
   Generating Code...
-D:\Developement\C++\pass-man\PassMan.cpp(53): warning C4715: 'passMan::getStringData': not all control paths return a value
+D:\Developement\C++\pass-man\SecMethods.cpp(20): warning C4715: 'secMan::getStringData': not all control paths return a value
+D:\Developement\C++\pass-man\PassMan.cpp(49): warning C4715: 'passMan::getStringData': not all control paths return a value
   Crypto.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
   Crypto.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   pass-man.vcxproj -> D:\Developement\C++\pass-man\x64\Debug\pass-man.exe

@@ -12,34 +12,38 @@ secMan::secMan(std::string auFile, std::string mailLoc) {
 	mailIdLoc = mailLoc;
 }
 
+// Defining method getStringData
+std::string secMan::getStringData(std::string data) {
+	if (data.compare("authpass") == 0) {
+		return authPass;
+	}
+}
+
 // Defining method checkAuth
 bool secMan::checkAuth() {
 	std::string inpAuthPass;										// To store input auth pass
 	std::string actAuthPass;										// To store actual auth pass
-	// Checking if authorization key set up
-	if (std::filesystem::exists(auFileName) == true) {
-		// Taking input
-		std::cout << "Enter authorization password : ";
-		std::getline(std::cin, inpAuthPass);
+	
+	// Taking input
+	std::cout << "Enter authorization password : ";
+	std::getline(std::cin, inpAuthPass);
 
-		// Getting actual auth pass
-		inpFile.open(auFileName);
-		std::getline(inpFile, actAuthPass);
-		inpFile.clear();
-		inpFile.close();
+	// Getting actual auth pass
+	inpFile.open(auFileName);
+	std::getline(inpFile, actAuthPass);
+	inpFile.clear();
+	inpFile.close();
 
-		// Checking for correct auth
-		// For successful authorization
-		if (inpAuthPass.compare(cm->inpDecrypt(actAuthPass)) == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	// Checking for correct auth
+	// For successful authorization
+	if (actAuthPass.compare(std::to_string(std::hash<std::string>{}(inpAuthPass))) == 0) {
+		// Initialising authPass for later use
+		authPass = inpAuthPass;
+		return true;
 	}
-	// Default case when no authorization has been set up
-	std::cout << "*WARNING* No authorization key has been set up. Your passwords are vulnerable !" << std::endl;
-	return true;
+	else {
+		return false;
+	}
 }
 
 // Defining method changeAuthKey
@@ -48,30 +52,21 @@ bool secMan::changeAuthKey() {
 	std::string conAuthKey;										// To store auth key confirmation
 	std::string mailId;											// To store input mail id
 
-	std::cout << "Enter new authorization key : ";
-
 	// Taking new auth key
-	std::getline(std::cin, newAuthKey);
-
-	// If user wants to remove auth key
-	if (newAuthKey.compare("") == 0) {
-		std::string conChoice;
-		// Asking confirmation
-		std::cout << "Are you sure you want to remove authentication ?(y/n) : ";
-		std::getline(std::cin, conChoice);
-		// If yes
-		if (toLower(conChoice).compare("y") == 0) {
-			std::filesystem::remove(auFileName);
-			return true;
+	while (true) {
+		std::cout << "Enter new authorization password (length 8-20 characters) : ";
+		std::getline(std::cin, newAuthKey);
+		if (newAuthKey.length() >= 8 && newAuthKey.length() <= 20) {
+			break;
 		}
-		// If no
 		else {
-			return false;
+			std::cout << "Please enter a valid passwprd !" << std::endl;
+			continue;
 		}
 	}
 
 	// Confirming auth key
-	std::cout << "Confirm authorization key   : ";
+	std::cout << "Confirm authorization password                            : ";
 	std::getline(std::cin, conAuthKey);
 
 	// Checking confirmation
@@ -80,9 +75,9 @@ bool secMan::changeAuthKey() {
 		return false;
 	}
 
-	// Storing new auth key
+	// Storing new auth key hashed
 	outFile.open(auFileName);
-	outFile << cm->inpEncrypt(newAuthKey) << "\n";
+	outFile << std::hash<std::string>{}(newAuthKey) << "\n";
 	outFile.clear();
 	outFile.close();
 

@@ -30,12 +30,8 @@ passMan::passMan(std::string dir) {
 
 // Defining method getStringData
 std::string passMan::getStringData(std::string dName) {
-    // If enKeyFile
-    if (dName.compare("efile") == 0) {
-        return enKeyFile;
-    }
     // If dataLocation
-    else if (dName.compare("dataloc") == 0) {
+    if (dName.compare("dataloc") == 0) {
         return dataLocation;
     }
     // If logDir
@@ -53,18 +49,23 @@ std::string passMan::getStringData(std::string dName) {
 }
 
 // Method to check if pass-man is started for 1st time
-void firstTime() {
-    // Checking if pass-man started for 1st time
-    if (std::filesystem::exists(pm->getStringData("efile")) == false) {
-        std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
+bool firstTime() {
+    std::cout << "Setting up pass-man for 1st time use ............." << std::endl;
 
-        // Generating new encryption key
-        cm->enKey();
-        std::cout << "Successfully generated Encryption Key !" << std::endl;
+    std::cout << "To use pass-man, you need to set up an authorization password to secure all you passwords" << std::endl;
 
-        // Logging
-        lm->logData("Set up pass-man for 1st time use");
+    // Calling changeAuthKey method to set up authentication key
+    bool isAuthChanged = sm->changeAuthKey();
+
+    // If not set up then exitting
+    if (isAuthChanged == false) {
+        return false;
     }
+
+    // Logging
+    lm->logData("Set up pass-man for 1st time use");
+
+    return true;
 }
 
 int main(int nArgs, char *allArgs[]) {
@@ -76,32 +77,31 @@ int main(int nArgs, char *allArgs[]) {
     // Initialising objects temporarily
     passMan tempPm(workDir);
     logMan tempLm(tempPm.getStringData("logdir"));
-    cryptMan tempCm(tempPm.getStringData("efile"));
     secMan tempSm(tempPm.getStringData("aufile"), tempPm.getStringData("mailloc"));
     
     // Assigning temporary objects' reference to global pointers
     pm = &tempPm;
     lm = &tempLm;
-    cm = &tempCm;
     sm = &tempSm;
 
     // Checking if this is the first time pass-man is started
-    firstTime();
-
-    // Loading encryption key
-    cm->getKey();
-
-    // Getting arguments
-    std::string oprArg = toLower(allArgs[1]);            // To store operation argument
-    std::string refName;                                 // To store reference name
+    // Checking if pass-man started for 1st time
+    if (std::filesystem::exists(pm->getStringData("aufile")) == false) {
+        bool isFirstDone = firstTime();
         
+        // If first time setup failed then exitting
+        if (isFirstDone == false) {
+            return 0;
+        }
+    }
+
     // Checking authorization
-    bool authStatus = sm->checkAuth();                       // To store authorization status
-    
+    bool authStatus = sm->checkAuth();                                      // To store authorization status    
+
     // If authorization fails
     if (authStatus == false) {
         bool isMailSent = sm->failAuthMail();
-        
+
         // Logging
         lm->logData("Unsuccessful attempt to use pass-man made");
 
@@ -117,8 +117,15 @@ int main(int nArgs, char *allArgs[]) {
         return 0;
     }
 
-    // To determine operation
-    
+    // Initialising cryptman with authPass
+    cryptMan tempCm(tempSm.getStringData("authpass"));
+    cm = &tempCm;
+
+    // Getting arguments
+    std::string oprArg = toLower(allArgs[1]);               // To store operation argument
+    std::string refName;                                    // To store reference name
+
+    // To determine operation    
     // For adding password
     if (oprArg.compare("add") == 0) {
         bool isAdded;                                    // To store whether password added or not
