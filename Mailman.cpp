@@ -25,8 +25,10 @@ bool sendMail(std::string toAddress, std::string mailHeading, std::string mailBo
 		smtpClient->Send("secur.passman@gmail.com", toAdd, mHead, mBody);
 		return true;
 	}
-	catch (std::exception e) {
-		std::cout << "Failed to send mail" << std::endl;
+	catch (System::Exception^ e) {
+		return false;
+	}
+	catch (std::exception e) {		
 		return false;
 	}	
 }

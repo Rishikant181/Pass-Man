@@ -19,6 +19,52 @@ std::string getReqInput() {
 	}
 }
 
+// Method to convert store data from one encrytion key type to another
+void convertData(cryptMan* oldcm, cryptMan* newcm) {
+	// Converting stored passwords
+	for (auto& file : std::filesystem::directory_iterator(pm->getStringData("dataloc"))) {
+		std::string comm;													// To store comment
+		std::string pass;													// To store password
+
+		// Getting each data file name
+		std::string fileName = file.path().string();
+
+		// Opening file and backing up
+		inpFile.open(fileName);
+		std::getline(inpFile, comm);
+		std::getline(inpFile, pass);
+		inpFile.clear();
+		inpFile.close();
+
+		// Overwritting with new data
+		outFile.open(fileName);
+		outFile << newcm->inpEncrypt(oldcm->inpDecrypt(comm)) + "\n";
+		outFile << newcm->inpEncrypt(oldcm->inpDecrypt(pass)) + "\n";
+		outFile.clear();
+		outFile.close();
+	}
+
+	// Converting stored reference names
+	for (auto& file : std::filesystem::directory_iterator(pm->getStringData("refloc"))) {
+		std::string refName;											// To store reference name
+
+		// Getting each data file name
+		std::string fileName = file.path().string();
+
+		// Opening file and backing up
+		inpFile.open(fileName);
+		std::getline(inpFile, refName);
+		inpFile.clear();
+		inpFile.close();
+
+		// Overwritting with new data
+		outFile.open(fileName);
+		outFile << newcm->inpEncrypt(oldcm->inpDecrypt(refName)) + "\n";
+		outFile.clear();
+		outFile.close();
+	}
+}
+
 // Method to add a new password to the database
 bool addPass(std::string refName) {
 	std::string passCom;										// To store commments about passwrds
@@ -123,8 +169,8 @@ void getList() {
 		inpFile.close();
 
 		// Displaying
-		std::cout << "\nReference Name : " << refName << std::endl;
-		std::cout << "Comments       : " << cm->inpDecrypt(passCom) << std::endl;
+		std::cout << "Reference Name : " << refName << std::endl;
+		std::cout << "Comments       : " << cm->inpDecrypt(passCom) << "\n" << std::endl;
 	}
 }
 

@@ -81,6 +81,15 @@ bool secMan::changeAuthKey() {
 	outFile.clear();
 	outFile.close();
 
+	// Converting stored data
+	// New object for new authPass
+	cryptMan* ncm = new cryptMan(newAuthKey);
+
+	convertData(cm, ncm);
+
+	// Deleting unused pointer
+	delete ncm;
+
 	return true;
 }
 

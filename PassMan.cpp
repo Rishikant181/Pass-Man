@@ -28,6 +28,14 @@ passMan::passMan(std::string dir) {
     mailIdLoc = workDir + "Security\\Mail-id.id";
 }
 
+// Defining desctructor
+int selfDestruct() {
+    // Displaying blank line for readability
+    std::cout << std::endl;
+
+    return 0;
+}
+
 // Defining method getStringData
 std::string passMan::getStringData(std::string dName) {
     // If dataLocation
@@ -73,6 +81,9 @@ bool firstTime() {
 }
 
 int main(int nArgs, char *allArgs[]) {
+    // Adding blank line for readability
+    std::cout << std::endl;
+    
     // Initialising working directory    
     // Storing location temporarily
     std::string workDir = allArgs[0];
@@ -95,7 +106,7 @@ int main(int nArgs, char *allArgs[]) {
         
         // If first time setup failed then exitting
         if (isFirstDone == false) {
-            return 0;
+            return selfDestruct();
         }
     }
 
@@ -118,7 +129,7 @@ int main(int nArgs, char *allArgs[]) {
         }
 
         std::cout << "Failed to authorize. Suspending further operations" << std::endl;
-        return 0;
+        return selfDestruct();
     }
 
     // Initialising cryptman with authPass
@@ -128,6 +139,9 @@ int main(int nArgs, char *allArgs[]) {
     // Getting arguments
     std::string oprArg = toLower(allArgs[1]);               // To store operation argument
     std::string refName;                                    // To store reference name
+
+    // Adding blank line for readability
+    std::cout << std::endl;
 
     // To determine operation    
     // For adding password
@@ -150,7 +164,7 @@ int main(int nArgs, char *allArgs[]) {
         else {
             std::cout << "No password was added" << std::endl;
         }
-        return 0;
+        return selfDestruct();
     }
     // For getting password
     else if (oprArg.compare("get") == 0) {
@@ -171,10 +185,10 @@ int main(int nArgs, char *allArgs[]) {
         }
         else {
             // Logging
-            lm->logData("Retrieved password with reference name : " + refName);
+            lm->logData("Retrieved password with reference name : " + std::to_string(std::hash<std::string>{}(refName)));
         }        
         // Exitting from program
-        return 0;
+        return selfDestruct();
     }
     // For getting stored passwords refName list with comments
     else if (oprArg.compare("list") == 0) {
@@ -182,7 +196,7 @@ int main(int nArgs, char *allArgs[]) {
 
         // Logging
         lm->logData("Retrieved list of store passwords(Reference names only)");
-        return 0;
+        return selfDestruct();
     }
     // For editing a stored password
     else if (oprArg.compare("edit") == 0) {
@@ -204,7 +218,7 @@ int main(int nArgs, char *allArgs[]) {
         else {
             std::cout << "No changes were made" << std::endl;
         }
-        return 0;
+        return selfDestruct();
     }
     // For deleting a stored password
     else if (oprArg.compare("del") == 0) {
@@ -226,7 +240,7 @@ int main(int nArgs, char *allArgs[]) {
         else {
             std::cout << "No changes were made" << std::endl;
         }
-        return 0;
+        return selfDestruct();
     }
     // For backing up saved passwords
     else if (oprArg.compare("backup") == 0) {
@@ -252,7 +266,7 @@ int main(int nArgs, char *allArgs[]) {
             // Logging
             lm->logData("Backup creation failed");
         }
-        return 0;
+        return selfDestruct();
     }
     // For restoring backed up passwords
     else if (oprArg.compare("restore") == 0) {
@@ -278,7 +292,7 @@ int main(int nArgs, char *allArgs[]) {
             // Logging
             lm->logData("Restore passwords failed");
         }
-        return 0;
+        return selfDestruct();
     }
     // For changing/adding mail id
     else if (oprArg.compare("mail") == 0) {
@@ -299,7 +313,7 @@ int main(int nArgs, char *allArgs[]) {
             lm->logData("Mail-id change failed");
         }
         
-        return 0;
+        return selfDestruct();
     }
     // For changing/setting up authorization key
     else if (oprArg.compare("auth") == 0) {
@@ -314,7 +328,7 @@ int main(int nArgs, char *allArgs[]) {
         else {
             std::cout << "Operation cancelled" << std::endl;
         }
-        return 0;
+        return selfDestruct();
     }
     // For changing email id
     // For displaying help
@@ -363,7 +377,7 @@ int main(int nArgs, char *allArgs[]) {
         std::cout << "       Usage       : pass-man auth\n" << std::endl;
         std::cout << "                     To remove authentication key, change key to blank\n" << std::endl;
 
-        return 0;
+        return selfDestruct();
     }
-    return 0;
+    return selfDestruct();
 }

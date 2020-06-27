@@ -9,3 +9,4 @@ bool backPass(std::string backLoc);
 bool restorePass(std::string backLoc);
 bool setEmail();
 bool authKey();
+void convertData(cryptMan* oldcm, cryptMan* newcm);
