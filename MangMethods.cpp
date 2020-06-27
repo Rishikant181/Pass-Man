@@ -33,16 +33,17 @@ bool addPass(std::string refName) {
 
 	std::cout << "Comments (Optional) : ";
 	std::getline(std::cin, passCom);
-	std::cout << "Enter password   : ";
+	std::cout << "Enter password      : ";
 	actPass = getReqInput();
-	std::cout << "Confirm password : ";
+	std::cout << "Confirm password    : ";
 	conPass = getReqInput();
 
 	// Checking if conPass == actPass
 	if (conPass.compare(actPass) == 0) {
 		// Adding data to database
 		outFile.open(pm->getStringData("dataloc") + refName + ".pass");
-		outFile << cm->inpEncrypt(actPass) << " " << passCom << "\n";
+		outFile << cm->inpEncrypt(passCom) << "\n";
+		outFile << cm->inpEncrypt(actPass) << "\n";
 		outFile.clear();
 		outFile.close();
 		return true;
@@ -64,6 +65,8 @@ bool getPass(std::string refName) {
 
 	// Getting data from database
 	inpFile.open(pm->getStringData("dataloc") + refName + ".pass");
+	std::getline(inpFile, enPass);
+	enPass = "";
 	std::getline(inpFile, enPass);
 	inpFile.clear();
 	inpFile.close();
@@ -91,11 +94,10 @@ void getList() {
 		std::getline(inpFile, passCom);
 		inpFile.clear();
 		inpFile.close();
-		passCom = passCom.substr(passCom.find(' ') + 1);
 
 		// Displaying
 		std::cout << "\nReference Name : " << refName << std::endl;
-		std::cout << "Comments       : " << passCom << std::endl;
+		std::cout << "Comments       : " << cm->inpDecrypt(passCom) << std::endl;
 	}
 }
 
@@ -103,7 +105,8 @@ void getList() {
 bool editPass(std::string refName) {
 	int oprChoice;											// To store operation choice
 	std::string choice;
-	std::string line;										// To store the input from file
+	std::string line1;										// To store the input from file (Comm)
+	std::string line2;										// To store the input from file	(Pass)
 	std::string newRefName;									// To store new reference name
 	std::string newPassCom;									// To store new comment
 	std::string newPass;									// To store new password
@@ -112,7 +115,8 @@ bool editPass(std::string refName) {
 	if (std::filesystem::exists(pm->getStringData("dataloc") + refName + ".pass") == true) {
 		// Storing original line temporarily
 		inpFile.open(pm->getStringData("dataloc") + refName + ".pass");
-		std::getline(inpFile, line);
+		std::getline(inpFile, line1);
+		std::getline(inpFile, line2);
 		inpFile.clear();
 		inpFile.close();
 		
@@ -142,7 +146,8 @@ bool editPass(std::string refName) {
 
 			// Writing new data
 			outFile.open(pm->getStringData("dataloc") + newRefName + ".pass");
-			outFile << line;
+			outFile << line1 << "\n";
+			outFile << line2 << "\n";
 			outFile.clear();
 			outFile.close();
 			return true;
@@ -157,7 +162,8 @@ bool editPass(std::string refName) {
 
 			// Writing new data
 			outFile.open(pm->getStringData("dataloc") + refName + ".pass");
-			outFile << line.substr(0, line.find(' ')) + " " + newPassCom;
+			outFile << cm->inpEncrypt(newPassCom) + "\n";
+			outFile << line2 + "\n";
 			outFile.clear();
 			outFile.close();
 			return true;
@@ -180,7 +186,8 @@ bool editPass(std::string refName) {
 
 			// Writing new data
 			outFile.open(pm->getStringData("dataloc") + refName + ".pass");
-			outFile << cm->inpEncrypt(newPass) + line.substr(line.find(' '));
+			outFile << line1 << "\n";
+			outFile << cm->inpEncrypt(newPass) << "\n";
 			outFile.clear();
 			outFile.close();
 			return true;
@@ -373,7 +380,7 @@ bool setEmail() {
 	
 	// Storing email to file
 	outFile.open(pm->getStringData("mailloc"));
-	outFile << cm->inpEncrypt(mailId) << std::endl;
+	outFile << mailId << std::endl;
 	outFile.clear();
 	outFile.close();	
 	return true;

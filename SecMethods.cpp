@@ -99,9 +99,6 @@ bool secMan::failAuthMail() {
 		inpFile.clear();
 		inpFile.close();
 
-		// Decrypting mail-id
-		mailId = cm->inpDecrypt(mailId);
-
 		// Getting current time
 		ctime_s(nowTime, 26, &now);
 		// Storing time as string

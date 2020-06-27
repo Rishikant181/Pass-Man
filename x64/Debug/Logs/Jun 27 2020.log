@@ -1,0 +1,12 @@
+11:01:36	->	Set up pass-man for 1st time use
+11:01:51	->	Stored a new pasword with reference name : test1
+11:02:27	->	Stored a new pasword with reference name : test2
+11:08:19	->	Unsuccessful attempt to use pass-man made
+11:08:19	->	Failed to send mail to alert user
+11:08:43	->	Stored a new pasword with reference name : test3
+11:10:16	->	Stored a new pasword with reference name : test4
+11:11:29	->	Stored a new pasword with reference name : test5
+11:12:14	->	Changed mail-id
+11:12:50	->	Retrieved list of store passwords(Reference names only)
+11:15:08	->	Unsuccessful attempt to use pass-man made
+11:15:08	->	Sent mail to alert user
