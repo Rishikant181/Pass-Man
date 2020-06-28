@@ -3,6 +3,7 @@
 
 // Including packages
 #include <iostream>
+#include <conio.h>
 #include <string>
 #include <ctime>
 #include <fstream>

@@ -2,23 +2,6 @@
 
 #include "GlobalMembers.h"
 
-// Method to get non-optional input
-std::string getReqInput() {
-	std::string inpVal;											// To store input string
-	while (true) {
-		// Take input
-		std::getline(std::cin, inpVal);
-		// If valid input
-		if (inpVal.compare("") != 0) {
-			return inpVal;
-		}
-		// If invalid input
-		else {
-			std::cout << "Please enter a valid input !" << std::endl;
-		}
-	}
-}
-
 // Method to convert store data from one encrytion key type to another
 void convertData(cryptMan* oldcm, cryptMan* newcm) {
 	// Converting stored passwords
@@ -81,11 +64,11 @@ bool addPass(std::string refName) {
 		return false;
 	}
 
-	std::cout << "Comments (Optional) : ";
-	std::getline(std::cin, passCom);
-	std::cout << "Enter password      : ";
+	std::cout << "Comments : ";
+	passCom = getInput();
+	std::cout << "Enter password : ";
 	actPass = getReqInput();
-	std::cout << "Confirm password    : ";
+	std::cout << "Confirm password : ";
 	conPass = getReqInput();
 
 	// Checking if conPass == actPass
@@ -106,7 +89,7 @@ bool addPass(std::string refName) {
 		return true;
 	}
 	else {
-		std::cout << "Confirmation failed ! Please try again !";
+		std::cout << "Confirmation failed ! Please try again !" << std::endl;
 		return false;
 	}
 }
@@ -169,8 +152,8 @@ void getList() {
 		inpFile.close();
 
 		// Displaying
-		std::cout << "Reference Name : " << refName << std::endl;
-		std::cout << "Comments       : " << cm->inpDecrypt(passCom) << "\n" << std::endl;
+		std::cout << "\nReference Name : " << refName << std::endl;
+		std::cout << "Comments       : " << cm->inpDecrypt(passCom) << std::endl;
 	}
 }
 
@@ -201,7 +184,7 @@ bool editPass(std::string refName) {
 		// Asking for operation
 		std::cout << "1. Change reference name" << std::endl;
 		std::cout << "2. Change comment" << std::endl;
-		std::cout << "3. Change password" << std::endl;
+		std::cout << "3. Change password\n" << std::endl;
 		
 		try {
 			// Taking choice
@@ -217,7 +200,7 @@ bool editPass(std::string refName) {
 		// For changing reference name
 		case 1: {
 			std::cout << "Enter new reference name : ";
-			newRefName = getReqInput();
+			newRefName = getInput();
 
 			// Deleting old data
 			std::filesystem::remove(pm->getStringData("dataloc") + hashRefName + ".pass");
@@ -241,7 +224,7 @@ bool editPass(std::string refName) {
 		// For changing comment
 		case 2: {
 			std::cout << "Enter new comment : ";
-			std::getline(std::cin, newPassCom);
+			newPassCom = getInput();
 
 			// Deleting old data
 			std::filesystem::remove(pm->getStringData("dataloc") + hashRefName + ".pass");
@@ -256,7 +239,7 @@ bool editPass(std::string refName) {
 		}
 		// For changing password
 		case 3: {
-			std::cout << "Enter new password   : ";
+			std::cout << "Enter new password : ";
 			newPass = getReqInput();
 			std::cout << "Confirm new password : ";
 			newPassCon = getReqInput();

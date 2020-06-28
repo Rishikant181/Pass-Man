@@ -26,7 +26,7 @@ bool secMan::checkAuth() {
 	
 	// Taking input
 	std::cout << "Enter authorization password : ";
-	std::getline(std::cin, inpAuthPass);
+	inpAuthPass = getReqInput();
 
 	// Getting actual auth pass
 	inpFile.open(auFileName);
@@ -55,7 +55,7 @@ bool secMan::changeAuthKey() {
 	// Taking new auth key
 	while (true) {
 		std::cout << "Enter new authorization password (length 8-20 characters) : ";
-		std::getline(std::cin, newAuthKey);
+		newAuthKey = getReqInput();
 		if (newAuthKey.length() >= 8 && newAuthKey.length() <= 20) {
 			break;
 		}
@@ -67,7 +67,7 @@ bool secMan::changeAuthKey() {
 
 	// Confirming auth key
 	std::cout << "Confirm authorization password                            : ";
-	std::getline(std::cin, conAuthKey);
+	conAuthKey = getReqInput();
 
 	// Checking confirmation
 	if (conAuthKey.compare(newAuthKey) != 0) {

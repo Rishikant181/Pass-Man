@@ -11,6 +11,53 @@ std::string toLower(std::string inpStr) {
 	return inpStr;
 }
 
+// Method to get non-required input in hidden format
+std::string getInput() {
+	std::string input;													// To store input
+	// Non-blank input
+	while (true) {
+		std::getline(std::cin, input);
+		// If non-blank input
+		if (input.compare("") != 0) {
+			return input;
+		}
+		else {
+			std::cout << "\nPlease enter a valid input !" << std::endl;
+			continue;
+		}
+	}
+}
+
+// Method to get required input in hidden format
+std::string getReqInput() {
+	std::string input;												// To store input
+	char ch;															// To store each character entered by user
+	// Non-blank input
+	while (true) {
+		input = "";
+		// As long as enter is not pressed
+		do {
+			ch = _getch();
+			input = input + ch;
+		} while (ch != 13);
+
+		// Removing enter char
+		input = input.substr(0, input.length() - 1);
+
+		// Going to a fresh line
+		std::cout << std::endl;
+
+		// If non-blank input
+		if (input.compare("") != 0) {
+			return input;
+		}
+		else {
+			std::cout << "\nPlease enter a valid input !" << std::endl;
+			continue;
+		}
+	}
+}
+
 // Method to get a substring from a string between two occurences of a giver char
 std::string subStr(std::string line, char reqChar, int firstOccur, int secondOccur) {
 	int numOccur = 0;													// To store occurence number of reqChar
