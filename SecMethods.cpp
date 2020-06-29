@@ -95,11 +95,8 @@ bool secMan::changeAuthKey() {
 // Defining method failAuthMail
 bool secMan::failAuthMail() {
 	// Getting mail id from registry
-	// Opening current user registry
-	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser;
-
-	// Accessing pass-man subkey
-	regKey->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
+	// Opening current user registry and PassMan subkey
+	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
 
 	// Getting mail-id if present else returning NA and storing as std::string
 	std::string mailId = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Mail-ID"), gcnew System::String("NA"))->ToString());

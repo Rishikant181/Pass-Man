@@ -12,3 +12,9 @@
 18:52:40	->	Changed mail-id
 18:52:58	->	Unsuccessful attempt to use pass-man made
 18:52:58	->	Sent mail to alert user
+19:20:34	->	Unsuccessful attempt to use pass-man made
+19:20:34	->	Failed to send mail to alert user
+19:21:10	->	Changed mail-id
+19:21:26	->	Unsuccessful attempt to use pass-man made
+19:21:26	->	Sent mail to alert user
+19:21:47	->	Retrieved list of store passwords(Reference names only)
