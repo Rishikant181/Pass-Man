@@ -9,7 +9,6 @@ using namespace System::Net;
 secMan::secMan(std::string auFile, std::string mailLoc) {
 	// Initialising member data
 	auFileName = auFile;
-	mailIdLoc = mailLoc;
 }
 
 // Defining method getStringData
@@ -95,18 +94,24 @@ bool secMan::changeAuthKey() {
 
 // Defining method failAuthMail
 bool secMan::failAuthMail() {
+	// Getting mail id from registry
+	// Opening current user registry
+	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser;
+
+	// Accessing pass-man subkey
+	regKey->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
+
+	// Getting mail-id if present else returning NA and storing as std::string
+	std::string mailId = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Mail-ID"), gcnew System::String("NA"))->ToString());
+	
+	// Closing connection to registry
+	regKey->Close();
+
 	// Alerting user if mail-id set up
-	if (std::filesystem::exists(mailIdLoc) == true) {
-		std::string mailId;                          // To store mail-id from file
+	if (mailId.compare("NA") != 0) {
 		std::string timeString;                      // To store time as string
 		time_t now = time(NULL);                     // To store time_t
 		char nowTime[26];                            // To store current time
-
-		// Getting mail-id from file
-		inpFile.open(mailIdLoc);
-		std::getline(inpFile, mailId);
-		inpFile.clear();
-		inpFile.close();
 
 		// Getting current time
 		ctime_s(nowTime, 26, &now);

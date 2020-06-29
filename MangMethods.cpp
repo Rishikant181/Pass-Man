@@ -390,7 +390,7 @@ bool authKey() {
 	}
 }
 
-// Method to get mail-id to send notifications
+// Method to set mail-id to send notifications
 bool setEmail() {
 	bool isMailSent;											// To check if mail is sent
 	std::string mailId;											// To store mail-id entered by user
@@ -398,9 +398,19 @@ bool setEmail() {
 	std::string inputOtp;										// To store otp entered by user
 	std::string uChoice;										// To store user choice
 
+	// Getting previous mail id
+	// Opening current user registry
+	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser;
+
+	// Accessing pass-man subkey
+	regKey->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
+
+	// Getting mail-id if present else returning NA and storing as std::string
+	mailId = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Mail-ID"), gcnew System::String("NA"))->ToString());
+
 	// Checking if mail already set up
-	// If does not exist
-	if (std::filesystem::exists(pm->getStringData("mailloc")) == false) {
+	// If does not set up
+	if (mailId.compare("NA") == 0 || mailId.compare("") == 0) {
 		std::cout << "Mail-id has not been set up. Do you want to set it now ?(y/n) : ";
 	}
 	// If exists
@@ -420,16 +430,14 @@ bool setEmail() {
 
 	// To remove mail-id
 	if (mailId.compare("") == 0) {
-		// If set up earlier
-		if (std::filesystem::exists(pm->getStringData("mailloc")) == true) {
-			// Removing mail-id
-			std::filesystem::remove(pm->getStringData("mailloc"));
-			std::cout << "Removed mail-id successfully !" << std::endl;
-		}
-		else {
-			std::cout << "Mail-id not set up, hence not removed" << std::endl;
-		}
-		return false;
+		// Writing blank mail to registry
+		regKey->SetValue(gcnew System::String("Mail-ID"), gcnew System::String(msclr::interop::marshal_as<System::String^>(mailId)), Microsoft::Win32::RegistryValueKind::String);
+
+		// Closing connection to registry
+		regKey->Close();
+		
+		std::cout << "Mail-ID removal successful !" << std::endl;
+		return true;
 	}
 
 	// Generating otp of length 6
@@ -457,10 +465,11 @@ bool setEmail() {
 
 	std::cout << "Email-id verification complete !" << std::endl;
 	
-	// Storing email to file
-	outFile.open(pm->getStringData("mailloc"));
-	outFile << mailId << std::endl;
-	outFile.clear();
-	outFile.close();	
+	// Storing email to regitstry
+	regKey->SetValue(gcnew System::String("Mail-ID"), gcnew System::String(msclr::interop::marshal_as<System::String^>(mailId)), Microsoft::Win32::RegistryValueKind::String);
+	
+	// Closing connection to registry
+	regKey->Close();
+
 	return true;
 }

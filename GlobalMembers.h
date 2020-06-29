@@ -1,15 +1,16 @@
 // This header files contains all the other headers as well as packages use by the program
 #pragma once
 
-// Including packages
+// Including system packages and headers
 #include <iostream>
 #include <conio.h>
 #include <string>
 #include <ctime>
 #include <fstream>
 #include <filesystem>
+#include <msclr/marshal_cppstd.h>
 
-// Including headers
+// Including custom headers
 #include "Crypto.h"
 #include "Helper.h"
 #include "Logger.h"

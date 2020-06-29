@@ -5,7 +5,6 @@ class secMan {
 private:
 	// Member data
 	std::string auFileName;												// To store authentication file name
-	std::string mailIdLoc;												// To store mail-id file location
 	std::string authPass;												// To store authorization password
 
 public:

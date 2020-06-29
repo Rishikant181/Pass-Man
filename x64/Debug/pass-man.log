@@ -1,4 +1,23 @@
-﻿  MangMethods.cpp
+﻿  Crypto.cpp
+D:\Developement\C++\pass-man\Crypto.cpp(8,26): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+D:\Developement\C++\pass-man\Crypto.cpp(33,33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Developement\C++\pass-man\Crypto.cpp(46,33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Developement\C++\pass-man\Crypto.cpp(59,18): warning C4244: 'initializing': conversion from '__int64' to 'char', possible loss of data
+  Helper.cpp
+D:\Developement\C++\pass-man\Helper.cpp(7,30): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Developement\C++\pass-man\Helper.cpp(64,29): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Developement\C++\pass-man\Helper.cpp(96,17): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Developement\C++\pass-man\Helper.cpp(163,38): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Logger.cpp
+  Mailman.cpp
+D:\Developement\C++\pass-man\Mailman.cpp(28,28): warning C4101: 'e': unreferenced local variable
+  MangMethods.cpp
+  PassMan.cpp
+  SecMethods.cpp
+  .NETFramework,Version=v4.0.AssemblyAttributes.cpp
+  Generating Code...
+D:\Developement\C++\pass-man\SecMethods.cpp(19): warning C4715: 'secMan::getStringData': not all control paths return a value
+D:\Developement\C++\pass-man\PassMan.cpp(61): warning C4715: 'passMan::getStringData': not all control paths return a value
   Crypto.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
   Crypto.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   pass-man.vcxproj -> D:\Developement\C++\pass-man\x64\Debug\pass-man.exe
