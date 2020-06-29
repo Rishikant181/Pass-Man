@@ -25,13 +25,18 @@ passMan::passMan(std::string dir) {
     refLocation = workDir + "Refs\\";
     logDir = workDir + "Logs\\";
     auFileName = workDir + "Security\\AuthPass.pass";
-    mailIdLoc = workDir + "Security\\Mail-id.id";
 }
 
 // Defining desctructor
 int selfDestruct() {
     // Displaying blank line for readability
-    std::cout << std::endl;
+    std::cout << "\n" << std::endl;
+
+    // Deleting pointers to re-allocate memory
+    delete pm;
+    delete lm;
+    delete sm;
+    delete cm;
 
     return 0;
 }
@@ -53,10 +58,6 @@ std::string passMan::getStringData(std::string dName) {
     // If auFileName
     else if (dName.compare("aufile") == 0) {
         return auFileName;
-    }
-    // If mailIdLoc
-    else if (dName.compare("mailloc") == 0) {
-        return mailIdLoc;
     }
 }
 
@@ -89,15 +90,10 @@ int main(int nArgs, char *allArgs[]) {
     std::string workDir = allArgs[0];
     workDir = workDir.substr(0, workDir.find_last_of('\\') + 1);
     
-    // Initialising objects temporarily
-    passMan tempPm(workDir);
-    logMan tempLm(tempPm.getStringData("logdir"));
-    secMan tempSm(tempPm.getStringData("aufile"), tempPm.getStringData("mailloc"));
-    
-    // Assigning temporary objects' reference to global pointers
-    pm = &tempPm;
-    lm = &tempLm;
-    sm = &tempSm;
+    // Initialising global pointers
+    pm = new passMan(workDir);
+    lm = new logMan(pm->getStringData("logdir"));
+    sm = new secMan(pm->getStringData("aufile"));
 
     // Checking if this is the first time pass-man is started
     // Checking if pass-man started for 1st time
@@ -133,8 +129,7 @@ int main(int nArgs, char *allArgs[]) {
     }
 
     // Initialising cryptman with authPass
-    cryptMan tempCm(tempSm.getStringData("authpass"));
-    cm = &tempCm;
+    cm = new cryptMan(sm->getStringData("authpass"));
 
     // Getting arguments
     std::string oprArg = toLower(allArgs[1]);               // To store operation argument

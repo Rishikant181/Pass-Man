@@ -6,7 +6,7 @@
 using namespace System::Net;
 
 // Defining member method
-secMan::secMan(std::string auFile, std::string mailLoc) {
+secMan::secMan(std::string auFile) {
 	// Initialising member data
 	auFileName = auFile;
 }

@@ -9,7 +9,7 @@ private:
 
 public:
 	// Member methods
-	secMan(std::string auFileName, std::string mailIdLoc);				// Constructor
+	secMan(std::string auFileName);										// Constructor
 	bool checkAuth();													// Method to check authentication
 	bool changeAuthKey();												// Method to change authentication key
 	bool failAuthMail();												// Method to send mail incase of failed authentication
