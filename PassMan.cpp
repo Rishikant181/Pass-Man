@@ -343,6 +343,50 @@ int main(int nArgs, char *allArgs[]) {
 
         return selfDestruct();
     }
+    // For resetting pass-man to factory state
+    else if (oprArg.compare("reset") == 0) {
+        std::string conChoice;                                              // To store user confirmation choice
+        // Asking for confirmation
+        std::cout << "*WARNING* This will remove all stored passwords. Do you want to continue ?(y/n) : ";
+        std::getline(std::cin, conChoice);
+        
+        // If yes
+        if (conChoice.compare("y") == 0) {
+            // Deleting everything inside Data folder
+            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("dataloc"))) {
+                std::filesystem::remove(file.path().string());
+            }
+
+            // Deleting everything inside Logs folder
+            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("logdir"))) {
+                std::filesystem::remove(file.path().string());
+            }
+
+            // Deleting everything inside Refs folder
+            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("refloc"))) {
+                std::filesystem::remove(file.path().string());
+            }
+
+            // Deleting everything inside Security folder
+            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("aufile").substr(0, pm->getStringData("aufile").find_last_of('\\')))) {
+                std::filesystem::remove(file.path().string());
+            }
+
+            // Deleting mail-id info from registry
+            Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser;
+            regKey->DeleteSubKeyTree(gcnew System::String("SOFTWARE\\PassMan"), false);
+
+            // Displaying result
+            std::cout << "Reset PassMan to factory default !" << std::endl;
+
+            return selfDestruct();
+        }
+        
+        std::cout << "No changes were done" << std::endl;
+
+        return selfDestruct();
+
+    }
     // For displaying help
     else if (oprArg.compare("help") == 0) {
         // Displaying help
