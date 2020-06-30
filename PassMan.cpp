@@ -32,11 +32,17 @@ int selfDestruct() {
     // Displaying blank line for readability
     std::cout << "\n" << std::endl;
 
-    // Deleting pointers to re-allocate memory
+    // Deleting pointed objects to re-allocate memory
     delete pm;
     delete lm;
     delete sm;
     delete cm;
+
+    // Pointing dangling pointers to null
+    pm = NULL;
+    lm = NULL;
+    sm = NULL;
+    cm = NULL;
 
     return 0;
 }

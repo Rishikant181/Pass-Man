@@ -46,6 +46,10 @@ void convertData(cryptMan* oldcm, cryptMan* newcm) {
 		outFile.clear();
 		outFile.close();
 	}
+
+	// Pointing dangling pointers to NULL
+	oldcm = NULL;
+	newcm = NULL;
 }
 
 // Method to add a new password to the database

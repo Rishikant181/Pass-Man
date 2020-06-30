@@ -65,7 +65,7 @@ bool secMan::changeAuthKey() {
 	}
 
 	// Confirming auth key
-	std::cout << "Confirm authorization password                            : ";
+	std::cout << "Confirm authorization password : ";
 	conAuthKey = getReqInput();
 
 	// Checking confirmation
@@ -88,6 +88,9 @@ bool secMan::changeAuthKey() {
 
 	// Deleting unused pointer
 	delete ncm;
+
+	// Pointing dangling pointer to NULL
+	ncm = NULL;
 
 	return true;
 }

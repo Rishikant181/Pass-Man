@@ -1,5 +1,5 @@
 ﻿  PassMan.cpp
-D:\Developement\C++\pass-man\PassMan.cpp(62): warning C4715: 'passMan::getStringData': not all control paths return a value
+D:\Developement\C++\pass-man\PassMan.cpp(68): warning C4715: 'passMan::getStringData': not all control paths return a value
   Crypto.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
   Crypto.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   pass-man.vcxproj -> D:\Developement\C++\pass-man\x64\Debug\pass-man.exe
