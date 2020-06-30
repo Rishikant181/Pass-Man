@@ -30,7 +30,7 @@ passMan::passMan(std::string dir) {
 // Defining desctructor
 int selfDestruct() {
     // Displaying blank line for readability
-    std::cout << "\n" << std::endl;
+    std::cout <<  std::endl;
 
     // Deleting pointed objects to re-allocate memory
     delete pm;
@@ -331,7 +331,18 @@ int main(int nArgs, char *allArgs[]) {
         }
         return selfDestruct();
     }
-    // For changing email id
+    // For cleaning all logs
+    else if (oprArg.compare("clean") == 0) {
+        // Cleaning all stored logs
+        for (auto& file : std::filesystem::directory_iterator(pm->getStringData("logdir"))) {
+            // Deleting logs
+            std::filesystem::remove(file.path().string());
+        }
+
+        std::cout << "Cleaned all logs !" << std::endl;
+
+        return selfDestruct();
+    }
     // For displaying help
     else if (oprArg.compare("help") == 0) {
         // Displaying help

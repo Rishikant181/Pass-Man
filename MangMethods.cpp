@@ -124,12 +124,13 @@ bool getPass(std::string refName) {
 	enPass = enPass.substr(0, enPass.find(' '));
 	
 	// Decrypting password and displaying
-	std::cout << cm->inpDecrypt(enPass);
+	std::cout << cm->inpDecrypt(enPass) << std::endl;
 	return true;
 }
 
 // Method to get the list of all passwords stored by pass-man and displaying only refName and comments
 void getList() {
+	int numStored = 0;												// To store number of stored passwords
 	std::string refName;											// To store file name
 	std::string passCom;											// To store comment
 	std::string hashRefName;										// To store hashed refName
@@ -155,10 +156,25 @@ void getList() {
 		inpFile.clear();
 		inpFile.close();
 
-		// Displaying
-		std::cout << "\nReference Name : " << refName << std::endl;
-		std::cout << "Comments       : " << cm->inpDecrypt(passCom) << std::endl;
+		// For 1st entry
+		if (numStored == 0) {
+			// Displaying
+			std::cout << "Reference Name : " << refName << std::endl;
+			std::cout << "Comments       : " << cm->inpDecrypt(passCom) << std::endl;
+		}
+		// For all other entries
+		else {
+			// Displaying
+			std::cout << "\nReference Name : " << refName << std::endl;
+			std::cout << "Comments       : " << cm->inpDecrypt(passCom) << std::endl;
+		}
+
+		// Storing number of entries
+		numStored = numStored + 1;
 	}
+
+	// Printing number of stored passwords
+	std::cout << "\nFound " << numStored << " stored passwords" << std::endl;;
 }
 
 // Method to modify a stored password using refName
