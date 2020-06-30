@@ -4,12 +4,11 @@
 class secMan {
 private:
 	// Member data
-	std::string auFileName;												// To store authentication file name
 	std::string authPass;												// To store authorization password
 
 public:
 	// Member methods
-	secMan(std::string auFileName);										// Constructor
+	secMan();															// Constructor
 	bool checkAuth();													// Method to check authentication
 	bool changeAuthKey();												// Method to change authentication key
 	bool failAuthMail();												// Method to send mail incase of failed authentication

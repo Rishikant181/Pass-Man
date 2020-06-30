@@ -1,3 +1,8 @@
-14:04:03	->	Retrieved list of store passwords(Reference names only)
-18:17:51	->	Changed mail-id
-18:18:08	->	Retrieved password with reference name : 2271358237066212092
+19:29:55	->	Set up pass-man for 1st time use
+19:30:10	->	Stored a new pasword with hashed reference name : 2271358237066212092
+19:30:40	->	Stored a new pasword with hashed reference name : 2271361535601096725
+19:30:51	->	Stored a new pasword with hashed reference name : 2271360436089468514
+19:30:57	->	Retrieved list of store passwords(Reference names only)
+19:31:37	->	Changed mail-id
+19:31:45	->	Unsuccessful attempt to use pass-man made
+19:31:45	->	Sent mail to alert user

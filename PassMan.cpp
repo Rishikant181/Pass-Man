@@ -99,15 +99,19 @@ int main(int nArgs, char *allArgs[]) {
     // Initialising global pointers
     pm = new passMan(workDir);
     lm = new logMan(pm->getStringData("logdir"));
-    sm = new secMan(pm->getStringData("aufile"));
+    sm = new secMan();
 
     // Checking if this is the first time pass-man is started
     // Checking if pass-man started for 1st time
-    if (std::filesystem::exists(pm->getStringData("aufile")) == false) {
+    if (sm->getStringData("authpass").compare("NA") == 0) {
         bool isFirstDone = firstTime();
         
         // If first time setup failed then exitting
         if (isFirstDone == false) {
+            return selfDestruct();
+        }
+        else {
+            std::cout << "Restart pass-man to continue" << std::endl;
             return selfDestruct();
         }
     }

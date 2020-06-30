@@ -421,8 +421,6 @@ bool setEmail() {
 	// Getting previous mail id
 	// Opening current user registry and PassMan subkey
 	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
-
-	// Getting mail-id if present else returning NA and storing as std::string
 	mailId = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Mail-ID"), gcnew System::String("NA"))->ToString());
 
 	// Checking if mail already set up
@@ -484,8 +482,6 @@ bool setEmail() {
 	
 	// Storing email to regitstry
 	regKey->SetValue(gcnew System::String("Mail-ID"), gcnew System::String(msclr::interop::marshal_as<System::String^>(mailId)), Microsoft::Win32::RegistryValueKind::String);
-	
-	// Closing connection to registry
 	regKey->Close();
 
 	return true;

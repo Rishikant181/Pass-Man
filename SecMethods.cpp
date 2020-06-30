@@ -6,9 +6,11 @@
 using namespace System::Net;
 
 // Defining member method
-secMan::secMan(std::string auFile) {
-	// Initialising member data
-	auFileName = auFile;
+secMan::secMan() {
+	// Opening registry to get enrypted auth key
+	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
+	authPass = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Authentication"), gcnew System::String("NA"))->ToString());
+	regKey->Close();	
 }
 
 // Defining method getStringData
@@ -27,17 +29,9 @@ bool secMan::checkAuth() {
 	std::cout << "Enter authorization password : ";
 	inpAuthPass = getReqInput();
 
-	// Getting actual auth pass
-	inpFile.open(auFileName);
-	std::getline(inpFile, actAuthPass);
-	inpFile.clear();
-	inpFile.close();
-
 	// Checking for correct auth
 	// For successful authorization
-	if (actAuthPass.compare(std::to_string(std::hash<std::string>{}(inpAuthPass))) == 0) {
-		// Initialising authPass for later use
-		authPass = inpAuthPass;
+	if (authPass.compare(std::to_string(std::hash<std::string>{}(inpAuthPass))) == 0) {
 		return true;
 	}
 	else {
@@ -74,11 +68,10 @@ bool secMan::changeAuthKey() {
 		return false;
 	}
 
-	// Storing new auth key hashed
-	outFile.open(auFileName);
-	outFile << std::hash<std::string>{}(newAuthKey) << "\n";
-	outFile.clear();
-	outFile.close();
+	// Storing new auth key hashed in Windows Registry
+	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
+	regKey->SetValue(gcnew System::String("Authentication"), gcnew System::String(msclr::interop::marshal_as<System::String^>(std::to_string(std::hash<std::string>{}(newAuthKey)))), Microsoft::Win32::RegistryValueKind::String);
+	regKey->Close();
 
 	// Converting stored data
 	// New object for new authPass
@@ -100,11 +93,7 @@ bool secMan::failAuthMail() {
 	// Getting mail id from registry
 	// Opening current user registry and PassMan subkey
 	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
-
-	// Getting mail-id if present else returning NA and storing as std::string
 	std::string mailId = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Mail-ID"), gcnew System::String("NA"))->ToString());
-	
-	// Closing connection to registry
 	regKey->Close();
 
 	// Alerting user if mail-id set up
