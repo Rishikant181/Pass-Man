@@ -5,7 +5,7 @@
 // Method to convert store data from one encrytion key type to another
 void convertData(cryptMan* oldcm, cryptMan* newcm) {
 	// Converting stored passwords
-	for (auto& file : std::filesystem::directory_iterator(pm->getStringData("dataloc"))) {
+	for (auto& file : std::filesystem::directory_iterator(pm->getDataLoc())) {
 		std::string comm;													// To store comment
 		std::string pass;													// To store password
 
@@ -28,7 +28,7 @@ void convertData(cryptMan* oldcm, cryptMan* newcm) {
 	}
 
 	// Converting stored reference names
-	for (auto& file : std::filesystem::directory_iterator(pm->getStringData("refloc"))) {
+	for (auto& file : std::filesystem::directory_iterator(pm->getRefLoc())) {
 		std::string refName;											// To store reference name
 
 		// Getting each data file name
@@ -63,7 +63,7 @@ bool addPass(std::string refName) {
 	hashRefName = std::to_string(std::hash<std::string>{}(refName));
 
 	// Checking if duplicate refName
-	if (std::filesystem::exists(pm->getStringData("dataloc") + hashRefName + ".pass") == true) {
+	if (std::filesystem::exists(pm->getDataLoc() + hashRefName + ".pass") == true) {
 		std::cout << "Reference name already exists, please enter another name" << std::endl;
 		return false;
 	}
@@ -78,14 +78,14 @@ bool addPass(std::string refName) {
 	// Checking if conPass == actPass
 	if (conPass.compare(actPass) == 0) {
 		// Adding data to database
-		outFile.open(pm->getStringData("dataloc") + std::to_string(std::hash<std::string>{}(refName)) + ".pass");
+		outFile.open(pm->getDataLoc() + std::to_string(std::hash<std::string>{}(refName)) + ".pass");
 		outFile << cm->inpEncrypt(passCom) << "\n";
 		outFile << cm->inpEncrypt(actPass) << "\n";
 		outFile.clear();
 		outFile.close();
 
 		// Adding refName data
-		outFile.open(pm->getStringData("refloc") + hashRefName + ".ref");
+		outFile.open(pm->getRefLoc() + hashRefName + ".ref");
 		outFile << cm->inpEncrypt(refName) << "\n";
 		outFile.clear();
 		outFile.close();
@@ -107,13 +107,13 @@ bool getPass(std::string refName) {
 	hashRefName = std::to_string(std::hash<std::string>{}(refName));
 
 	// If reference name not found
-	if (std::filesystem::exists(pm->getStringData("dataloc") + hashRefName + ".pass") == false) {
+	if (std::filesystem::exists(pm->getDataLoc() + hashRefName + ".pass") == false) {
 		// Exitting from program
 		return false;
 	}
 
 	// Getting data from database
-	inpFile.open(pm->getStringData("dataloc") + hashRefName + ".pass");
+	inpFile.open(pm->getDataLoc() + hashRefName + ".pass");
 	std::getline(inpFile, enPass);
 	enPass = "";
 	std::getline(inpFile, enPass);
@@ -136,13 +136,13 @@ void getList() {
 	std::string hashRefName;										// To store hashed refName
 
 	// Iterating through directory
-	for (auto& file : std::filesystem::directory_iterator(pm->getStringData("refloc"))) {
+	for (auto& file : std::filesystem::directory_iterator(pm->getRefLoc())) {
 		// Getting refName
-		hashRefName = file.path().string().substr(pm->getStringData("refloc").length());
+		hashRefName = file.path().string().substr(pm->getRefLoc().length());
 		hashRefName = hashRefName.substr(0, hashRefName.length() - 4);
 		
 		// Getting actual refName (encrypted)
-		inpFile.open(pm->getStringData("refloc") + hashRefName + ".ref");
+		inpFile.open(pm->getRefLoc() + hashRefName + ".ref");
 		std::getline(inpFile, refName);
 		inpFile.clear();
 		inpFile.close();
@@ -151,7 +151,7 @@ void getList() {
 		refName = cm->inpDecrypt(refName);
 
 		// Getting comment from file
-		inpFile.open(pm->getStringData("dataloc") + hashRefName + ".pass");
+		inpFile.open(pm->getDataLoc() + hashRefName + ".pass");
 		std::getline(inpFile, passCom);
 		inpFile.clear();
 		inpFile.close();
@@ -193,9 +193,9 @@ bool editPass(std::string refName) {
 	hashRefName = std::to_string(std::hash<std::string>{}(refName));
 
 	// If refName exists
-	if (std::filesystem::exists(pm->getStringData("dataloc") + hashRefName + ".pass") == true) {
+	if (std::filesystem::exists(pm->getDataLoc() + hashRefName + ".pass") == true) {
 		// Storing original line temporarily
-		inpFile.open(pm->getStringData("dataloc") + hashRefName + ".pass");
+		inpFile.open(pm->getDataLoc() + hashRefName + ".pass");
 		std::getline(inpFile, line1);
 		std::getline(inpFile, line2);
 		inpFile.clear();
@@ -223,18 +223,18 @@ bool editPass(std::string refName) {
 			newRefName = getInput();
 
 			// Deleting old data
-			std::filesystem::remove(pm->getStringData("dataloc") + hashRefName + ".pass");
-			std::filesystem::remove(pm->getStringData("refloc") + hashRefName + ".ref");
+			std::filesystem::remove(pm->getDataLoc() + hashRefName + ".pass");
+			std::filesystem::remove(pm->getRefLoc() + hashRefName + ".ref");
 
 			// Writing new data (data)
-			outFile.open(pm->getStringData("dataloc") + std::to_string(std::hash<std::string>{}(newRefName)) + ".pass");
+			outFile.open(pm->getDataLoc() + std::to_string(std::hash<std::string>{}(newRefName)) + ".pass");
 			outFile << line1 << "\n";
 			outFile << line2 << "\n";
 			outFile.clear();
 			outFile.close();
 
 			// Encrypted refName
-			outFile.open(pm->getStringData("refloc") + std::to_string(std::hash<std::string>{}(newRefName)) + ".ref");
+			outFile.open(pm->getRefLoc() + std::to_string(std::hash<std::string>{}(newRefName)) + ".ref");
 			outFile << cm->inpEncrypt(newRefName) << "\n";
 			outFile.clear();
 			outFile.close();
@@ -247,10 +247,10 @@ bool editPass(std::string refName) {
 			newPassCom = getInput();
 
 			// Deleting old data
-			std::filesystem::remove(pm->getStringData("dataloc") + hashRefName + ".pass");
+			std::filesystem::remove(pm->getDataLoc() + hashRefName + ".pass");
 
 			// Writing new data
-			outFile.open(pm->getStringData("dataloc") + hashRefName + ".pass");
+			outFile.open(pm->getDataLoc() + hashRefName + ".pass");
 			outFile << cm->inpEncrypt(newPassCom) + "\n";
 			outFile << line2 + "\n";
 			outFile.clear();
@@ -271,10 +271,10 @@ bool editPass(std::string refName) {
 			}
 			
 			// Deleting old data
-			std::filesystem::remove(pm->getStringData("dataloc") + refName + ".pass");
+			std::filesystem::remove(pm->getDataLoc() + refName + ".pass");
 
 			// Writing new data
-			outFile.open(pm->getStringData("dataloc") + refName + ".pass");
+			outFile.open(pm->getDataLoc() + refName + ".pass");
 			outFile << line1 << "\n";
 			outFile << cm->inpEncrypt(newPass) << "\n";
 			outFile.clear();
@@ -303,7 +303,7 @@ bool delPass(std::string refName) {
 	hashRefName = std::to_string(std::hash<std::string>{}(refName));
 
 	// Checking if reference name does not exist
-	if (std::filesystem::exists(pm->getStringData("refloc") + hashRefName + ".ref") == false) {
+	if (std::filesystem::exists(pm->getRefLoc() + hashRefName + ".ref") == false) {
 		std::cout << "No such reference name found !" << std::endl;
 		return false;
 	}
@@ -314,8 +314,8 @@ bool delPass(std::string refName) {
 	// If confirmed yes
 	if (toLower(delChoice).compare("y") == 0) {
 		// Deleting
-		std::filesystem::remove(pm->getStringData("dataloc") + hashRefName + ".pass");
-		std::filesystem::remove(pm->getStringData("refloc") + hashRefName + ".ref");
+		std::filesystem::remove(pm->getDataLoc() + hashRefName + ".pass");
+		std::filesystem::remove(pm->getRefLoc() + hashRefName + ".ref");
 		return true;
 	}
 	// If no
@@ -339,8 +339,8 @@ bool backPass(std::string backLoc) {
 	std::filesystem::create_directory(backLoc);
 
 	// Copying data
-	std::filesystem::copy(pm->getStringData("dataloc"), backLoc);
-	std::filesystem::copy(pm->getStringData("refloc"), backLoc);
+	std::filesystem::copy(pm->getDataLoc(), backLoc);
+	std::filesystem::copy(pm->getRefLoc(), backLoc);
 
 	return true;
 }
@@ -357,8 +357,8 @@ bool restorePass(std::string backLoc) {
 	for (auto& fileName : std::filesystem::directory_iterator(backLoc)) {
 		// Trying to copy file
 		try {
-			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->getStringData("dataloc"));
-			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->getStringData("refloc"));
+			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->getDataLoc());
+			std::filesystem::copy(std::filesystem::absolute(fileName.path()), pm->getRefLoc());
 		}
 		// If file already exists
 		catch (std::exception e) {
@@ -374,15 +374,18 @@ bool restorePass(std::string backLoc) {
 bool authKey() {
 	std::string newAuthKey;										// To store new authorization key
 	// Checking if previous authorization key present
-	if (std::filesystem::exists(pm->getStringData("aufile")) == true) {
+	// Opening registry to get enrypted auth key
+	Microsoft::Win32::RegistryKey^ regKey = Microsoft::Win32::Registry::CurrentUser->CreateSubKey(gcnew System::String("SOFTWARE\\PassMan"));
+	std::string authPass = msclr::interop::marshal_as<std::string>(regKey->GetValue(gcnew System::String("Authentication"), gcnew System::String("NA"))->ToString());
+	regKey->Close();
+
+	// If not set up
+	if (authPass.compare("NA") == 0) {
 		std::cout << "Authorization key has already been set up. Do you wish to change it ?(y/n) : ";
 		std::string aChoice;
 		std::getline(std::cin, aChoice);
 		// If yes
 		if (aChoice.compare("y") == 0) {
-			// Deleting previous auth key
-			std::filesystem::remove(pm->getStringData("aufile"));
-			
 			// Changing authorization key
 			sm->changeAuthKey();			
 			return true;

@@ -24,7 +24,6 @@ passMan::passMan(std::string dir) {
     dataLocation = workDir + "Data\\";
     refLocation = workDir + "Refs\\";
     logDir = workDir + "Logs\\";
-    auFileName = workDir + "Security\\AuthPass.pass";
 }
 
 // Defining desctructor
@@ -47,24 +46,17 @@ int selfDestruct() {
     return 0;
 }
 
-// Defining method getStringData
-std::string passMan::getStringData(std::string dName) {
-    // If dataLocation
-    if (dName.compare("dataloc") == 0) {
-        return dataLocation;
-    }
-    // If refLocation
-    else if (dName.compare("refloc") == 0) {
-        return refLocation;
-    }
-    // If logDir
-    else if (dName.compare("logdir") == 0) {
-        return logDir;
-    }
-    // If auFileName
-    else if (dName.compare("aufile") == 0) {
-        return auFileName;
-    }
+// Defining getter methods
+std::string passMan::getDataLoc() {
+    return dataLocation;
+}
+
+std::string passMan::getRefLoc() {
+    return refLocation;
+}
+
+std::string passMan::getLogDir() {
+    return logDir;
 }
 
 // Method to check if pass-man is started for 1st time
@@ -98,7 +90,7 @@ int main(int nArgs, char *allArgs[]) {
     
     // Initialising global pointers
     pm = new passMan(workDir);
-    lm = new logMan(pm->getStringData("logdir"));
+    lm = new logMan(pm->getLogDir());
     sm = new secMan();
 
     // Checking if this is the first time pass-man is started
@@ -338,7 +330,7 @@ int main(int nArgs, char *allArgs[]) {
     // For cleaning all logs
     else if (oprArg.compare("clean") == 0) {
         // Cleaning all stored logs
-        for (auto& file : std::filesystem::directory_iterator(pm->getStringData("logdir"))) {
+        for (auto& file : std::filesystem::directory_iterator(pm->getLogDir())) {
             // Deleting logs
             std::filesystem::remove(file.path().string());
         }
@@ -357,22 +349,17 @@ int main(int nArgs, char *allArgs[]) {
         // If yes
         if (conChoice.compare("y") == 0) {
             // Deleting everything inside Data folder
-            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("dataloc"))) {
+            for (auto& file : std::filesystem::directory_iterator(pm->getDataLoc())) {
                 std::filesystem::remove(file.path().string());
             }
 
             // Deleting everything inside Logs folder
-            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("logdir"))) {
+            for (auto& file : std::filesystem::directory_iterator(pm->getLogDir())) {
                 std::filesystem::remove(file.path().string());
             }
 
             // Deleting everything inside Refs folder
-            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("refloc"))) {
-                std::filesystem::remove(file.path().string());
-            }
-
-            // Deleting everything inside Security folder
-            for (auto& file : std::filesystem::directory_iterator(pm->getStringData("aufile").substr(0, pm->getStringData("aufile").find_last_of('\\')))) {
+            for (auto& file : std::filesystem::directory_iterator(pm->getRefLoc())) {
                 std::filesystem::remove(file.path().string());
             }
 
